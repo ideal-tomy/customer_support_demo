@@ -30,7 +30,8 @@ Definition: [`../customer_support_demo_definition.md`](../customer_support_demo_
 | 2 | `restaurant` | 条件確認＋提案＋予約導線 |
 | 3 | `beauty-salon` | ヒアリング＋メニュー案内＋安全な有人誘導 |
 
-詳細な作業分解: [`00_common/work-plan.md`](00_common/work-plan.md)
+詳細な作業分解: [`00_common/work-plan.md`](00_common/work-plan.md)  
+手動受け入れ: [`00_common/acceptance-checklist.md`](00_common/acceptance-checklist.md)
 
 ---
 
@@ -41,6 +42,7 @@ docs/industry-packs/
 ├─ README.md                          ← 本ファイル
 ├─ 00_common/
 │  ├─ work-plan.md                    ← 実装作業の順番（正）
+│  ├─ acceptance-checklist.md         ← 手動受け入れチェックリスト
 │  ├─ answer-layers.md                ← 回答3層モデル
 │  ├─ pack-architecture.md            ← 共通構造・差し替え契約
 │  ├─ common-prompt.md                ← 全業種共通システムプロンプト
@@ -83,9 +85,11 @@ docs/industry-packs/
 
 ---
 
-## 現状コードとの関係（Phase 0）
+## 現状コードとの関係
 
-現在のサンプルは小売パック:
+実装済み:
 
-- `data/sample/retail-commerce-v1/`（東和ライフストア・8文書）
-- 業種レジストリ: `src/packs/`（飲食・エステは準備中）
+- `data/sample/retail-commerce-v1/` / `restaurant-v1/` / `beauty-salon-v1/`
+- 業種レジストリ: `src/packs/`（3業種とも available）
+- 業種選択ファースト UX → チャット →「最初からやり直す」
+- Phase 5: 顧客向け参照表示・デモ説明モード・お試しナレッジ案内

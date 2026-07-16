@@ -5,7 +5,6 @@ type IntentQuickRepliesProps = {
   path: IntentNode[];
   disabled?: boolean;
   onSelect: (node: IntentNode) => void;
-  onReset: () => void;
 };
 
 function currentOptions(tree: IntentTree, path: IntentNode[]): IntentNode[] {
@@ -16,14 +15,13 @@ function currentOptions(tree: IntentTree, path: IntentNode[]): IntentNode[] {
 
 /**
  * 用件選択を bot 吹き出し直下のクイックリプライチップとして表示する。
- * 「リセット」はチップ列末尾のテキストリンク。
+ * 業種選択への戻りはヘッダーのアバター。会話のやり直しは「最初からやり直す」。
  */
 export function IntentQuickReplies({
   tree,
   path,
   disabled = false,
   onSelect,
-  onReset,
 }: IntentQuickRepliesProps) {
   const options = currentOptions(tree, path);
 
@@ -44,14 +42,6 @@ export function IntentQuickReplies({
           {node.label}
         </button>
       ))}
-      <button
-        type="button"
-        className="intent-quick-reset"
-        disabled={disabled}
-        onClick={onReset}
-      >
-        リセット
-      </button>
     </div>
   );
 }

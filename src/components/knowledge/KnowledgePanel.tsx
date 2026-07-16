@@ -241,7 +241,7 @@ function CustomKnowledgeEditor({
               className="knowledge-custom-clear"
               onClick={() => {
                 clearCustom();
-                setStatus("マイFAQをクリアし、サンプルに戻しました。");
+                setStatus("お試しナレッジをクリアし、サンプルに戻しました。");
               }}
             >
               すべて削除
@@ -290,9 +290,6 @@ export function KnowledgePanel({ activeTarget, onSelectDocument }: KnowledgePane
     manifest,
     setSource,
     uiLabels,
-    industryRegistry,
-    industryId,
-    setIndustry,
   } = useKnowledgePack();
 
   const activeDocument =
@@ -304,32 +301,6 @@ export function KnowledgePanel({ activeTarget, onSelectDocument }: KnowledgePane
 
   return (
     <div className="knowledge-panel">
-      <div className="knowledge-industry-picker" role="group" aria-label="業種パック">
-        {industryRegistry.map((entry) => {
-          const selected = entry.industry === industryId;
-          const disabled = !entry.available;
-          const label = entry.available
-            ? entry.brand.storeName
-            : `${entry.label}（準備中）`;
-          return (
-            <button
-              key={entry.industry}
-              type="button"
-              className={
-                selected
-                  ? "knowledge-industry-btn is-active"
-                  : "knowledge-industry-btn"
-              }
-              disabled={disabled}
-              title={entry.available ? undefined : entry.description}
-              onClick={() => setIndustry(entry.industry)}
-            >
-              {label}
-            </button>
-          );
-        })}
-      </div>
-
       <div className="knowledge-pack-tabs" role="tablist" aria-label={uiLabels.knowledgeSheetTitle}>
         <button
           type="button"
@@ -377,9 +348,14 @@ export function KnowledgePanel({ activeTarget, onSelectDocument }: KnowledgePane
           {" · "}
           更新 {manifest.lastUpdated}
         </p>
+        {source === "sample" ? (
+          <p className="knowledge-pack-hint">
+            いま選んでいる業種パックの店舗ご案内です。デモ本体の質問はこちらを根拠にします。
+          </p>
+        ) : null}
         {source === "custom" ? (
           <p className="knowledge-pack-hint">
-            自社FAQ・カタログの挙動確認は、設定で BYOK / Trial を選ぶと精度が上がります。
+            お試しナレッジはセッション内のみ。業種パックとは別枠で、自社FAQの載せ替え挙動を確認できます。チャットはタブ切替で参照先が変わります。
           </p>
         ) : null}
       </header>

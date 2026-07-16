@@ -117,7 +117,7 @@ function totalChars(documents: KnowledgeDocument[]): number {
 function customManifest(documents: KnowledgeDocument[]): KnowledgePackManifest {
   return {
     packId: CUSTOM_PACK_ID,
-    name: "マイFAQ / カタログ",
+    name: "お試しナレッジ",
     companyName: "セッション内の一時パック",
     isFictional: false,
     version: "session",

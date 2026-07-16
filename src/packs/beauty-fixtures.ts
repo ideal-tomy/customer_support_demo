@@ -28,6 +28,12 @@ export const fixtureFirstFacial: InternalKnowledgeOutput = {
   missingInformation: [],
   followUps: [
     {
+      id: "fu-related-dry",
+      label: "乾燥が気になるときは？",
+      action: "ask_related",
+      payload: { guidedQuestionId: "gq-dry-skin-menu" },
+    },
+    {
       id: "fu-menu",
       label: "メニューを見る",
       action: "open_document",
@@ -77,6 +83,12 @@ export const fixtureDrySkinMenu: InternalKnowledgeOutput = {
   deadlines: [],
   missingInformation: [],
   followUps: [
+    {
+      id: "fu-related-pain",
+      label: "赤み・痛みがあるときは？",
+      action: "ask_related",
+      payload: { guidedQuestionId: "gq-pain-redness" },
+    },
     {
       id: "fu-menu",
       label: "メニューを見る",

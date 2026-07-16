@@ -17,8 +17,14 @@ import {
   findFixtureByGuidedQuestionId,
   getSampleOutputByKeyword,
 } from "../mocks/guided-questions";
+import {
+  extractOrderIdFromQuestion,
+  lookupShippingTrackMock,
+} from "../mocks/shipping-track";
 import { getAnswerSkeletonFixtures } from "../mocks/answer-skeleton-fixtures";
 import type { InternalKnowledgeOutput } from "../types/internal-knowledge";
+import { resolveShippingTrackOutput } from "../packs/retail-fixtures";
+import { getActiveIndustryId } from "../packs/registry";
 import { buildInternalKnowledgeAiRequest } from "./adapters/internal-knowledge-input";
 import {
   parseInternalKnowledgeAiResult,
@@ -87,7 +93,7 @@ export async function askInternalKnowledge(
 
   if (activeDocs.length === 0) {
     throw new Error(
-      "FAQ文書がありません。「マイFAQ / カタログ」から文書を追加してください。",
+      "FAQ文書がありません。「お試しナレッジ」から文書を追加してください。",
     );
   }
 
@@ -98,6 +104,17 @@ export async function askInternalKnowledge(
         const fixture = findFixtureByGuidedQuestionId(input.guidedQuestionId);
         if (fixture) {
           return { output: fixture.output, mode, source: "fixture" };
+        }
+      }
+      // 小売: 注文番号付き配送確認はインプロセス追跡モックを優先
+      if (getActiveIndustryId() === "retail-commerce") {
+        const orderId = extractOrderIdFromQuestion(question);
+        if (orderId && lookupShippingTrackMock(orderId)) {
+          return {
+            output: resolveShippingTrackOutput(question),
+            mode,
+            source: "fixture",
+          };
         }
       }
       const known = matchKnownSampleOutput(question);

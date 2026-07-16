@@ -12,6 +12,10 @@ import {
   setIkAccessMode,
   setTrialCode,
 } from "../../access/ik-settings";
+import {
+  setDemoExplainMode,
+  useDemoExplainMode,
+} from "../../demo/demo-explain-mode";
 
 type AccessModeBarProps = {
   trialPortalUrl: string;
@@ -27,6 +31,7 @@ export function AccessModeBar({
   onSaved,
 }: AccessModeBarProps) {
   const [mode, setMode] = useState<IkAccessMode>(() => getIkAccessMode());
+  const demoExplain = useDemoExplainMode();
   const [apiKeyDraft, setApiKeyDraft] = useState("");
   const [trialDraft, setTrialDraft] = useState("");
   const [hasApiKey, setHasApiKey] = useState(
@@ -184,6 +189,21 @@ export function AccessModeBar({
       {mode === "sample" ? (
         <p className="access-mode-note">
           サンプルは固定回答または規程検索のローカル合成です（Provider 非呼び出し）。
+        </p>
+      ) : null}
+
+      <label className="access-mode-explain-toggle">
+        <input
+          type="checkbox"
+          checked={demoExplain}
+          onChange={(e) => setDemoExplainMode(e.target.checked)}
+        />
+        <span>デモ説明モード（技術向け）</span>
+      </label>
+      {demoExplain ? (
+        <p className="access-mode-note">
+          ON のあいだ、回答下に「回答方式: 固定回答 / AI＋ナレッジ /
+          業務データ連携」を表示します。
         </p>
       ) : null}
 

@@ -40,10 +40,30 @@ export const retailGuidedQuestions: GuidedQuestionDef[] = [
     difficulty: 1,
   },
   {
+    id: "gq-color-mismatch",
+    question:
+      "商品が届きましたが、思っていた色と違いました。返品できますか。",
+    fixtureId: "color-mismatch",
+    difficulty: 2,
+  },
+  {
+    id: "gq-delivery-by-day-after",
+    question: "明後日までに東京へ届けられる商品はありますか。",
+    fixtureId: "delivery-by-day-after",
+    difficulty: 2,
+  },
+  {
     id: "gq-humidifier-pick",
     question:
       "一人暮らしで使う、小さくて手入れしやすい加湿器はどれですか。",
     fixtureId: "humidifier-pick",
+    difficulty: 2,
+  },
+  {
+    id: "gq-humidifier-compare",
+    question:
+      "Luna Mist Mini と Pro の違いを、価格以外も含めて教えてください。",
+    fixtureId: "humidifier-compare",
     difficulty: 2,
   },
   {

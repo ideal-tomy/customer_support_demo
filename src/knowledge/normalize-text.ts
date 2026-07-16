@@ -124,7 +124,7 @@ export function normalizeTextToDocument(options: {
     title,
     version: "session",
     effectiveDate: todayIso(),
-    ownerDepartment: options.ownerDepartment ?? "マイFAQ",
+    ownerDepartment: options.ownerDepartment ?? "お試しナレッジ",
     summary,
     sections,
   };

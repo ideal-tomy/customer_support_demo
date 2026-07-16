@@ -28,6 +28,12 @@ export const fixtureHoursHoliday: InternalKnowledgeOutput = {
   missingInformation: [],
   followUps: [
     {
+      id: "fu-related-course",
+      label: "飲み放題付きのコースは？",
+      action: "ask_related",
+      payload: { guidedQuestionId: "gq-course-5k-drink" },
+    },
+    {
       id: "fu-hours",
       label: "店舗案内を見る",
       action: "open_document",
@@ -81,7 +87,7 @@ export const fixtureFamilySaturday: InternalKnowledgeOutput = {
       id: "fu-vacancy",
       label: "空席を確認",
       action: "ask_related",
-      payload: { question: "今日19時から4名で空いていますか？" },
+      payload: { guidedQuestionId: "gq-vacancy-today-19" },
     },
     { id: "fu-human", label: "店舗へ相談", action: "escalate_human" },
   ],
@@ -131,6 +137,12 @@ export const fixtureCourse5kDrink: InternalKnowledgeOutput = {
   deadlines: ["コースは利用日の3日前まで"],
   missingInformation: [],
   followUps: [
+    {
+      id: "fu-related-vacancy",
+      label: "今日19時の空席は？",
+      action: "ask_related",
+      payload: { guidedQuestionId: "gq-vacancy-today-19" },
+    },
     {
       id: "fu-course",
       label: "コースを見る",

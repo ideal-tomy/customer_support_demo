@@ -487,23 +487,6 @@ body {
   cursor: not-allowed;
 }
 
-.intent-quick-reset {
-  font: inherit;
-  font-size: 0.78rem;
-  padding: 0.35rem 0.4rem;
-  border: none;
-  background: none;
-  color: #6b7580;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  cursor: pointer;
-}
-
-.intent-quick-reset:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
 .conversation-composer {
   flex: 0 0 auto;
   display: flex;
@@ -791,42 +774,96 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* --- Knowledge (inside sheet) --- */
+/* --- Industry select (first screen) --- */
 
-.knowledge-panel {
-  font-family: "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
-}
-
-.knowledge-industry-picker {
+.industry-select {
+  flex: 1;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-bottom: 0.65rem;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 1rem 1.25rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(180deg, #f4faf7 0%, #eef3f0 100%);
 }
 
-.knowledge-industry-btn {
-  flex: 1 1 auto;
+.industry-select-lead {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: #3d4650;
+}
+
+.industry-select-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.industry-select-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 1rem 1.1rem;
+  border: 1px solid #c5d4cc;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  box-shadow: 0 1px 2px rgba(8, 80, 65, 0.06);
+}
+
+.industry-select-card:hover {
+  border-color: var(--cs-green, #1d9e75);
+  background: #f7fcfa;
+}
+
+.industry-select-card:focus-visible {
+  outline: 2px solid var(--cs-green, #1d9e75);
+  outline-offset: 2px;
+}
+
+.industry-select-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--cs-green-ink, #085041);
+}
+
+.industry-select-card-blurb {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: #5a6570;
+}
+
+.chat-app-restart-btn {
+  flex: 0 0 auto;
   min-height: 34px;
-  padding: 0.35rem 0.55rem;
-  border: 1px solid #d0d6dd;
-  border-radius: 6px;
-  background: #fafbfc;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid #c5d4cc;
+  border-radius: 8px;
+  background: #fff;
   color: #3d4650;
   font: inherit;
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-.knowledge-industry-btn.is-active {
+.chat-app-restart-btn:hover {
   border-color: var(--cs-green, #1d9e75);
-  background: var(--cs-green-soft, #e1f5ee);
   color: var(--cs-green-ink, #085041);
+  background: var(--cs-green-soft, #e1f5ee);
 }
 
-.knowledge-industry-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+/* --- Knowledge (inside sheet) --- */
+
+.knowledge-panel {
+  font-family: "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
 }
 
 .knowledge-pack-tabs {
@@ -1384,11 +1421,40 @@ body {
   border-radius: 12px;
 }
 
+.conversation-source-hints {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 0.35rem;
+  padding: 0 0.15rem;
+}
+
 .conversation-source-hint {
   margin: 0;
-  padding: 0 0.15rem;
   font-size: 0.75rem;
   color: #5c6570;
+}
+
+.conversation-source-hint.is-tech {
+  color: #6b5b3e;
+}
+
+.access-mode-explain-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #d0d6dd;
+  border-radius: 8px;
+  background: #fafbfc;
+  font-size: 0.85rem;
+  color: #3d4650;
+  cursor: pointer;
+}
+
+.access-mode-explain-toggle input {
+  margin-top: 0.15rem;
 }
 
 /* App-wide type base for chat shell */
@@ -1419,6 +1485,31 @@ body {
   align-items: center;
   gap: 0.55rem;
   min-width: 0;
+}
+
+.cs-avatar-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.cs-avatar-btn:hover {
+  opacity: 0.88;
+}
+
+.cs-avatar-btn:focus-visible {
+  outline: 2px solid var(--cs-green);
+  outline-offset: 2px;
+}
+
+.cs-avatar {
+  display: block;
+  flex-shrink: 0;
 }
 
 .cs-header-text {

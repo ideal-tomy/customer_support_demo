@@ -4,7 +4,7 @@
 
 ---
 
-## Phase 0 — 設計・仕様の固定（いまここ）
+## Phase 0 — 設計・仕様の固定（完了）
 
 | # | 作業 | 成果物 | 状態 |
 |---|------|--------|------|
@@ -22,8 +22,8 @@
 | # | 作業 | 内容 | 状態 |
 |---|------|------|------|
 | 1.1 | `CustomerSupportPack` 型の導入 | `src/packs/types.ts` | 完了 |
-| 1.2 | パックレジストリ | retail 実装、restaurant/beauty は disabled | 完了 |
-| 1.3 | UI の業種切替 | Knowledge シート先頭の業種ピッカー | 完了 |
+| 1.2 | パックレジストリ | retail / restaurant / beauty いずれも `available: true` | 完了 |
+| 1.3 | UI の業種切替 | 業種選択ファースト UX | 完了 |
 | 1.4 | 表示名の業種別差し替え | uiLabels（商品・ご利用ガイド等） | 完了 |
 | 1.5 | 固定回答 / AI+ナレッジ / 有人 | fixtures + promptOverlay + escalate | 完了 |
 
@@ -37,10 +37,10 @@
 |---|------|------|------|
 | 2.1 | 架空店舗「東和ライフストア」のブランド設定 | retail-commerce pack | 完了 |
 | 2.2 | knowledge 仕様に沿った本文作成 | `data/sample/retail-commerce-v1/` | 完了 |
-| 2.3 | Layer 1 固定回答 | fixtures（返品期限・領収書等） | 完了（一部） |
-| 2.4 | Layer 2 AI 横断シナリオ | 初期不良×保証 fixture | 完了（一部） |
-| 2.5 | Layer 3 デモ演出 | 配送は escalate／要確認（モックAPIは未） | 一部 |
-| 2.6 | ガイド質問・fixture・intent tree | 完了 |
+| 2.3 | Layer 1 固定回答 | fixtures（返品期限・領収書・色違い等） | 完了 |
+| 2.4 | Layer 2 AI 横断シナリオ | 初期不良×保証、加湿器比較 fixture | 完了 |
+| 2.5 | Layer 3 デモ演出 | TW-20482 インプロセス追跡モック（`src/mocks/shipping-track.ts`） | 完了 |
+| 2.6 | ガイド質問・fixture・intent tree | Q1–Q8 対応 | 完了 |
 | 2.7 | 固定返信ルールを promptOverlay | 完了 |
 
 ---
@@ -64,7 +64,7 @@
 | # | 作業 | 内容 | 状態 |
 |---|------|------|------|
 | 4.1 | 「Beauty Salon Lueur」ブランド | 医療脱毛・HIFU 等は含めない | 完了 |
-| 4.2 | knowledge 本文作成 | `data/sample/beauty-salon-v1/`（仕様 MD は確定値反映済み） | 完了 |
+| 4.2 | knowledge 本文作成 | `data/sample/beauty-salon-v1/`（仕様 MD に確定値反映済み） | 完了 |
 | 4.3 | 危険質問の固定拒否／有人誘導 | pain-redness fixture（メニュー提案禁止） | 完了 |
 | 4.4 | メニュー候補提示（断定しない） | first-facial / dry-skin-menu | 完了 |
 | 4.5 | registry 有効化・ガイド質問 | `beauty-salon` available: true | 完了 |
@@ -75,12 +75,14 @@
 
 ## Phase 5 — 磨き込み（全業種）
 
-| # | 作業 | 内容 |
-|---|------|------|
-| 5.1 | 回答ソース表示の顧客向け文言 | 「参照したご案内: …」 |
-| 5.2 | デモ説明モード（固定 / AI+ナレッジ / 業務連携） | 技術説明用トグル |
-| 5.3 | マイFAQ と業種パックの同居 UX | お試しナレッジの位置づけ明確化 |
-| 5.4 | Ground Truth / 代表質問チェックリスト | 業種 README の質問を回帰 |
+| # | 作業 | 内容 | 状態 |
+|---|------|------|------|
+| 5.1 | 回答ソース表示の顧客向け文言 | 「参照したご案内: …」 | 完了 |
+| 5.2 | デモ説明モード（固定 / AI+ナレッジ / 業務連携） | 設定トグル＋sessionStorage | 完了 |
+| 5.3 | マイFAQ と業種パックの同居 UX | Knowledge ヒント＋custom バナー（表示名は「お試しナレッジ」） | 完了 |
+| 5.4 | Ground Truth / 代表質問チェックリスト | `acceptance-checklist.md`（手動） | 完了 |
+
+**受け入れ:** 顧客向け参照表示と、技術向けデモ説明モードの切替ができる。 → **達成**
 
 ---
 
@@ -94,6 +96,6 @@
 
 ## 次の一手
 
-1. 業種ピッカーで 小売 ↔ 飲食 ↔ エステ を切替確認  
-2. 飲食: 連続デモ Q7 → Q2 → Q6、アレルギー Q3 を確認  
-3. Phase 5 磨き込み（任意）  
+1. [`acceptance-checklist.md`](acceptance-checklist.md) に沿って手動確認し、結果をチェック反映する  
+2. 設定 → デモ説明モード ON/OFF で「回答方式」の出し分けを確認する  
+3. 本番 API 接続が必要になったら別タスクとして切り出す  

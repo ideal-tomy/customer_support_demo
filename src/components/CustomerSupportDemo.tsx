@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AccessModeBar } from "./access/AccessModeBar";
 import { ConversationShell } from "./conversation/ConversationShell";
+import { IndustrySelectScreen } from "./IndustrySelectScreen";
 import { KnowledgePanel } from "./knowledge/KnowledgePanel";
 import { BottomSheet } from "./ui/BottomSheet";
 import { useVisualViewportHeight } from "../hooks/useVisualViewportHeight";
@@ -12,17 +13,35 @@ const trialPortalUrl =
   "https://ai-demo-studio-lime.vercel.app/admin/trial";
 
 type SheetKind = "none" | "knowledge" | "settings" | "human";
+type DemoScreen = "industry-select" | "chat";
 
 /** Customer support chat shell — mockup-aligned header + thread. */
 export function CustomerSupportDemo() {
   const { height, offsetTop } = useVisualViewportHeight();
   const pack = useKnowledgePack();
+  const [screen, setScreen] = useState<DemoScreen>("industry-select");
   const [activeTarget, setActiveTarget] = useState<OpenDocumentTarget | null>(null);
   const [sheet, setSheet] = useState<SheetKind>("none");
+  /** 同一業種のまま会話を初期化するキー */
+  const [chatSessionKey, setChatSessionKey] = useState(0);
 
   const handleOpenDocument = (target: OpenDocumentTarget) => {
     setActiveTarget(target);
     setSheet("knowledge");
+  };
+
+  /** 業種選択画面へ戻る（アバター専用） */
+  const goToIndustrySelect = () => {
+    setSheet("none");
+    setActiveTarget(null);
+    setScreen("industry-select");
+  };
+
+  /** 選択中の業種のまま会話を最初からやり直す */
+  const handleRestartConversation = () => {
+    setSheet("none");
+    setActiveTarget(null);
+    setChatSessionKey((k) => k + 1);
   };
 
   useEffect(() => {
@@ -32,6 +51,8 @@ export function CustomerSupportDemo() {
       return exists ? prev : null;
     });
   }, [pack.revision, pack.documents]);
+
+  const isSelect = screen === "industry-select";
 
   return (
     <div
@@ -44,97 +65,144 @@ export function CustomerSupportDemo() {
       <div className="chat-app-column">
         <header className="chat-app-header cs-header">
           <div className="cs-header-main">
-            <TowaAvatar size={38} />
+            {!isSelect ? (
+              <button
+                type="button"
+                className="cs-avatar-btn"
+                onClick={goToIndustrySelect}
+                aria-label="業種選択に戻る"
+                title="業種選択に戻る"
+              >
+                <TowaAvatar size={38} />
+              </button>
+            ) : (
+              <TowaAvatar size={38} />
+            )}
             <div className="cs-header-text">
-              <h1 className="chat-app-title">{pack.uiLabels.supportTitle}</h1>
-              <p className="cs-header-status">
-                <span className="cs-status-dot" aria-hidden="true" />
-                {pack.uiLabels.statusLine}
-              </p>
+              <h1 className="chat-app-title">
+                {isSelect ? "業種を選んで試す" : pack.uiLabels.supportTitle}
+              </h1>
+              {!isSelect ? (
+                <p className="cs-header-status">
+                  <span className="cs-status-dot" aria-hidden="true" />
+                  {pack.uiLabels.statusLine}
+                </p>
+              ) : (
+                <p className="cs-header-status">カスタマーサポートデモ</p>
+              )}
             </div>
           </div>
-          <div className="chat-app-header-actions">
-            <button
-              type="button"
-              className={
-                pack.isSample
-                  ? "chat-app-pack-badge"
-                  : "chat-app-pack-badge is-custom"
-              }
-              onClick={() => setSheet("knowledge")}
-              title={pack.uiLabels.knowledgeSheetTitle}
-            >
-              {pack.isSample
-                ? pack.uiLabels.sampleTabLabel
-                : pack.uiLabels.customTabLabel}
-            </button>
-            <button
-              type="button"
-              className="chat-app-icon-btn"
-              aria-label="担当者に相談"
-              onClick={() => setSheet("human")}
-            >
-              <HeadsetIcon />
-            </button>
-            <button
-              type="button"
-              className="chat-app-icon-btn"
-              aria-label="FAQパック"
-              onClick={() => setSheet("knowledge")}
-            >
-              <InfoIcon />
-            </button>
-            <button
-              type="button"
-              className="chat-app-icon-btn"
-              aria-label="設定"
-              onClick={() => setSheet("settings")}
-            >
-              <SettingsIcon />
-            </button>
-          </div>
+          {!isSelect ? (
+            <div className="chat-app-header-actions">
+              <button
+                type="button"
+                className="chat-app-restart-btn"
+                onClick={handleRestartConversation}
+              >
+                最初からやり直す
+              </button>
+              <button
+                type="button"
+                className={
+                  pack.isSample
+                    ? "chat-app-pack-badge"
+                    : "chat-app-pack-badge is-custom"
+                }
+                onClick={() => setSheet("knowledge")}
+                title={pack.uiLabels.knowledgeSheetTitle}
+              >
+                {pack.isSample
+                  ? pack.uiLabels.sampleTabLabel
+                  : pack.uiLabels.customTabLabel}
+              </button>
+              <button
+                type="button"
+                className="chat-app-icon-btn"
+                aria-label="担当者に相談"
+                onClick={() => setSheet("human")}
+              >
+                <HeadsetIcon />
+              </button>
+              <button
+                type="button"
+                className="chat-app-icon-btn"
+                aria-label="FAQパック"
+                onClick={() => setSheet("knowledge")}
+              >
+                <InfoIcon />
+              </button>
+              <button
+                type="button"
+                className="chat-app-icon-btn"
+                aria-label="設定"
+                onClick={() => setSheet("settings")}
+              >
+                <SettingsIcon />
+              </button>
+            </div>
+          ) : (
+            <div className="chat-app-header-actions">
+              <button
+                type="button"
+                className="chat-app-icon-btn"
+                aria-label="設定"
+                onClick={() => setSheet("settings")}
+              >
+                <SettingsIcon />
+              </button>
+            </div>
+          )}
         </header>
 
-        <ConversationShell
-          onOpenDocument={handleOpenDocument}
-          onEscalateHuman={() => setSheet("human")}
-        />
+        {isSelect ? (
+          <IndustrySelectScreen onStarted={() => setScreen("chat")} />
+        ) : (
+          <ConversationShell
+            key={`${pack.industryId}-${chatSessionKey}`}
+            onOpenDocument={handleOpenDocument}
+            onEscalateHuman={() => setSheet("human")}
+          />
+        )}
       </div>
 
-      <BottomSheet
-        open={sheet === "knowledge"}
-        title={pack.uiLabels.knowledgeSheetTitle}
-        onClose={() => setSheet("none")}
-      >
-        <KnowledgePanel
-          activeTarget={activeTarget}
-          onSelectDocument={(documentId) =>
-            setActiveTarget({ documentId, sectionId: undefined })
-          }
-        />
-      </BottomSheet>
-
-      <BottomSheet
-        open={sheet === "human"}
-        title="担当者に相談"
-        onClose={() => setSheet("none")}
-      >
-        <div className="cs-human-sheet">
-          <TowaAvatar size={48} />
-          <p className="cs-human-title">有人サポートへ接続（デモ）</p>
-          <p className="cs-human-body">
-            本番ではチャットや電話の担当者キューへ接続します。このデモでは接続演出のみです。
-            AIで解決できない個別事情・補償判断などは、こちらからお進みください。
-          </p>
-          <button
-            type="button"
-            className="cs-human-cta"
-            onClick={() => setSheet("none")}
+      {!isSelect ? (
+        <>
+          <BottomSheet
+            open={sheet === "knowledge"}
+            title={pack.uiLabels.knowledgeSheetTitle}
+            onClose={() => setSheet("none")}
           >
-            閉じる
-          </button>
-        </div>
-      </BottomSheet>
+            <KnowledgePanel
+              activeTarget={activeTarget}
+              onSelectDocument={(documentId) =>
+                setActiveTarget({ documentId, sectionId: undefined })
+              }
+            />
+          </BottomSheet>
+
+          <BottomSheet
+            open={sheet === "human"}
+            title="担当者に相談"
+            onClose={() => setSheet("none")}
+          >
+            <div className="cs-human-sheet">
+              <TowaAvatar size={48} />
+              <p className="cs-human-title">有人サポートへ接続（デモ）</p>
+              <p className="cs-human-body">
+                本番ではチャットや電話の担当者キューへ接続します。このデモでは接続演出のみです。
+                AIで解決できない個別事情・補償判断などは、こちらからお進みください。
+              </p>
+              <button
+                type="button"
+                className="cs-human-cta"
+                onClick={() => setSheet("none")}
+              >
+                閉じる
+              </button>
+            </div>
+          </BottomSheet>
+        </>
+      ) : null}
 
       <BottomSheet
         open={sheet === "settings"}

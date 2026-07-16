@@ -8,9 +8,24 @@
       "guidedQuestionId": "gq-return-deadline"
     },
     {
+      "id": "intent-color-mismatch",
+      "label": "色が違うので返品したい",
+      "guidedQuestionId": "gq-color-mismatch"
+    },
+    {
       "id": "intent-product-pick",
       "label": "商品を選びたい",
       "guidedQuestionId": "gq-humidifier-pick"
+    },
+    {
+      "id": "intent-product-compare",
+      "label": "MiniとProを比較",
+      "guidedQuestionId": "gq-humidifier-compare"
+    },
+    {
+      "id": "intent-delivery-rush",
+      "label": "急ぎで届けたい",
+      "guidedQuestionId": "gq-delivery-by-day-after"
     },
     {
       "id": "intent-shipping-status",

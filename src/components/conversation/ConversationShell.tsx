@@ -14,6 +14,10 @@ import { TypingIndicator } from "./TypingIndicator";
 import { useAskFlow } from "../../hooks/useAskFlow";
 import { askInternalKnowledge } from "../../ai/askInternalKnowledge";
 import {
+  formatAnswerMethodLabel,
+  useDemoExplainMode,
+} from "../../demo/demo-explain-mode";
+import {
   findFixtureByGuidedQuestionId,
   findGuidedQuestion,
   getPhase3IntentTree,
@@ -33,15 +37,14 @@ import type {
   MissingInfoChoice,
 } from "../../types/internal-knowledge";
 
-const SAMPLE_WELCOME_LINES = [
-  "こんにちは！東和ライフストアのトワです。商品選び・配送・返品など、ご用件を選ぶかそのまま入力してください。",
-];
-
 const CUSTOM_WELCOME_LINES = [
-  "マイFAQ / カタログ（セッション内）だけを根拠にご案内します。",
+  "お試しナレッジ（セッション内）だけを根拠にご案内します。",
   "本番の機密は入れず、挙動確認用のテキストでお試しください。",
   "自由に質問してください。",
 ];
+
+/** サンプル体験で続けて質問できる往復数（用件選択＋自由入力） */
+const MAX_SAMPLE_TURNS = 3;
 
 type ThreadTurn = {
   id: string;
@@ -72,6 +75,7 @@ export function ConversationShell({
 }: ConversationShellProps) {
   const { isRunning, result, error, runAsk, reset } = useAskFlow();
   const pack = useKnowledgePack();
+  const demoExplain = useDemoExplainMode();
   const intentTree = getPhase3IntentTree() as IntentTree;
   const [turns, setTurns] = useState<ThreadTurn[]>([]);
   const [intentPath, setIntentPath] = useState<IntentNode[]>([]);
@@ -86,8 +90,26 @@ export function ConversationShell({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const packRevisionRef = useRef(pack.revision);
 
-  const showIntentUi = pack.isSample && turns.length === 0 && !isRunning;
-  const welcomeLines = pack.isSample ? SAMPLE_WELCOME_LINES : CUSTOM_WELCOME_LINES;
+  const sampleTurnsExhausted =
+    pack.isSample && turns.length >= MAX_SAMPLE_TURNS;
+  const canSampleContinue =
+    pack.isSample && turns.length < MAX_SAMPLE_TURNS && !isRunning;
+  const latestTurnAnswered =
+    turns.length > 0 && Boolean(turns[turns.length - 1]?.blocks);
+  /** 初回: ウェルカム直下の用件チップ */
+  const showWelcomeIntents =
+    pack.isSample && turns.length === 0 && intentPath.length === 0 && !isRunning;
+  /** 回答後: 続けて質問するための用件チップ（最大3往復） */
+  const showContinueIntents =
+    canSampleContinue && latestTurnAnswered && intentPath.length === 0;
+  /** 中間階層のチップ（初回／継続どちらでも） */
+  const showIntentPathChips =
+    pack.isSample && intentPath.length > 0 && !isRunning && !sampleTurnsExhausted;
+  const welcomeLines = pack.isSample
+    ? [
+        `こんにちは！${pack.brand.storeName}の案内です。ご用件を選ぶかそのまま入力してください。`,
+      ]
+    : CUSTOM_WELCOME_LINES;
 
   const attachResult = useEffectEvent((blocks: AnswerBlocks) => {
     if (!pendingTurnId) return;
@@ -111,7 +133,16 @@ export function ConversationShell({
 
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [turns, intentSelections, isRunning, showIntentUi, error, notice]);
+  }, [
+    turns,
+    intentSelections,
+    isRunning,
+    showWelcomeIntents,
+    showContinueIntents,
+    showIntentPathChips,
+    error,
+    notice,
+  ]);
 
   const resizeTextarea = () => {
     const el = textareaRef.current;
@@ -151,6 +182,12 @@ export function ConversationShell({
     displayText?: string,
   ) => {
     if (isRunning) return;
+    if (pack.isSample && turns.length >= MAX_SAMPLE_TURNS) {
+      setNotice(
+        "サンプル体験の質問はここまでです。「最初からやり直す」で同じ業種の会話を再開するか、左上のアイコンで業種選択に戻れます。",
+      );
+      return;
+    }
     const id = `turn-${Date.now()}`;
     setNotice(null);
     setTurns((prev) => [
@@ -166,6 +203,7 @@ export function ConversationShell({
     ]);
     setPendingTurnId(id);
     setIntentPath([]);
+    setIntentSelections([]);
     setDraft("");
     setClarifyTurnId(null);
 
@@ -255,15 +293,21 @@ export function ConversationShell({
         break;
       case "ask_related": {
         const gq = chip.payload?.guidedQuestionId;
-        if (!gq) break;
-        const guided = findGuidedQuestion(gq);
-        const fixture = findFixtureByGuidedQuestionId(gq);
-        startAsk(
-          guided?.question ?? fixture?.question ?? chip.label,
-          fixture?.title ?? chip.label,
-          gq,
-          chip.label,
-        );
+        if (gq) {
+          const guided = findGuidedQuestion(gq);
+          const fixture = findFixtureByGuidedQuestionId(gq);
+          startAsk(
+            guided?.question ?? fixture?.question ?? chip.label,
+            fixture?.title ?? chip.label,
+            gq,
+            chip.label,
+          );
+          break;
+        }
+        const relatedQuestion = chip.payload?.question;
+        if (relatedQuestion) {
+          startAsk(relatedQuestion, chip.label, undefined, chip.label);
+        }
         break;
       }
       case "resend_variant": {
@@ -314,10 +358,10 @@ export function ConversationShell({
     <div className="conversation-shell">
       {!pack.isSample ? (
         <p className="conversation-pack-banner" role="status">
-          利用中: {pack.manifest.name}
+          利用中: お試しナレッジ（業種パックとは別）
           {pack.documents.length > 0
-            ? `（${pack.documents.length}文書）`
-            : "（文書なし — FAQパックから追加）"}
+            ? ` · ${pack.documents.length}文書`
+            : " · 文書なし — FAQパックから追加"}
         </p>
       ) : null}
       <div className="conversation-thread" aria-live="polite">
@@ -329,45 +373,44 @@ export function ConversationShell({
               </p>
             ))}
           </div>
-          {showIntentUi && intentPath.length === 0 ? (
+          {showWelcomeIntents ? (
             <IntentQuickReplies
               tree={intentTree}
               path={intentPath}
               disabled={isRunning}
               onSelect={handleIntentSelect}
-              onReset={handleReset}
             />
           ) : null}
         </div>
 
-        {intentSelections.map((selection, index) => {
-          const isLast = index === intentSelections.length - 1;
-          const showNextChips =
-            showIntentUi && isLast && intentPath.length > 0 && !isRunning;
-          return (
-            <div key={selection.id} className="chat-intent-block">
-              <div className="chat-row chat-row-user">
-                <div className="chat-bubble chat-bubble-user">
-                  <p className="chat-bubble-text">{selection.label}</p>
+        {turns.length === 0
+          ? intentSelections.map((selection, index) => {
+              const isLast = index === intentSelections.length - 1;
+              const showNextChips = showIntentPathChips && isLast;
+              return (
+                <div key={selection.id} className="chat-intent-block">
+                  <div className="chat-row chat-row-user">
+                    <div className="chat-bubble chat-bubble-user">
+                      <p className="chat-bubble-text">{selection.label}</p>
+                    </div>
+                  </div>
+                  <div className="chat-row chat-row-bot">
+                    <div className="chat-bubble chat-bubble-bot">
+                      <p className="chat-bubble-text">もう少し詳しく選んでください。</p>
+                    </div>
+                    {showNextChips ? (
+                      <IntentQuickReplies
+                        tree={intentTree}
+                        path={intentPath}
+                        disabled={isRunning}
+                        onSelect={handleIntentSelect}
+                      />
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-              <div className="chat-row chat-row-bot">
-                <div className="chat-bubble chat-bubble-bot">
-                  <p className="chat-bubble-text">もう少し詳しく選んでください。</p>
-                </div>
-                {showNextChips ? (
-                  <IntentQuickReplies
-                    tree={intentTree}
-                    path={intentPath}
-                    disabled={isRunning}
-                    onSelect={handleIntentSelect}
-                    onReset={handleReset}
-                  />
-                ) : null}
-              </div>
-            </div>
-          );
-        })}
+              );
+            })
+          : null}
 
         {notice ? (
           <p className="conversation-stub-notice" role="status">
@@ -419,28 +462,88 @@ export function ConversationShell({
                     turn.blocks.missingInfoChoices.length > 0 ? (
                       <ClarifyingChoice
                         choices={turn.blocks.missingInfoChoices}
-                        disabled={isRunning}
+                        disabled={isRunning || sampleTurnsExhausted}
                         onSelect={(choice) => handleClarify(turn.id, choice)}
                       />
                     ) : null}
                   </div>
-                  {isLatestAnswered && result?.source ? (
-                    <p className="conversation-source-hint">
-                      回答ソース:{" "}
-                      {result.source === "llm"
-                        ? "実AI（Structured Output）"
-                        : result.source === "fixture"
-                          ? "サンプル固定回答"
-                          : result.source === "llm-empty-fallback"
-                            ? "実AI応答が空のためローカル合成"
-                            : "サンプル検索（ローカル合成）"}
-                    </p>
+                  {isLatestAnswered && result?.source && turn.blocks ? (
+                    <div className="conversation-source-hints">
+                      {turn.blocks.citations[0]?.documentTitle ? (
+                        <p className="conversation-source-hint">
+                          参照したご案内: {turn.blocks.citations[0].documentTitle}
+                        </p>
+                      ) : null}
+                      {demoExplain ? (
+                        <p className="conversation-source-hint is-tech">
+                          {formatAnswerMethodLabel(
+                            result.source,
+                            turn.blocks.status,
+                          )}
+                        </p>
+                      ) : null}
+                    </div>
                   ) : null}
                 </div>
               ) : null}
             </div>
           );
         })}
+
+        {turns.length > 0
+          ? intentSelections.map((selection, index) => {
+              const isLast = index === intentSelections.length - 1;
+              const showNextChips = showIntentPathChips && isLast;
+              return (
+                <div key={selection.id} className="chat-intent-block">
+                  <div className="chat-row chat-row-user">
+                    <div className="chat-bubble chat-bubble-user">
+                      <p className="chat-bubble-text">{selection.label}</p>
+                    </div>
+                  </div>
+                  <div className="chat-row chat-row-bot">
+                    <div className="chat-bubble chat-bubble-bot">
+                      <p className="chat-bubble-text">もう少し詳しく選んでください。</p>
+                    </div>
+                    {showNextChips ? (
+                      <IntentQuickReplies
+                        tree={intentTree}
+                        path={intentPath}
+                        disabled={isRunning}
+                        onSelect={handleIntentSelect}
+                      />
+                    ) : null}
+                  </div>
+                </div>
+              );
+            })
+          : null}
+
+        {showContinueIntents ? (
+          <div className="chat-row chat-row-bot">
+            <div className="chat-bubble chat-bubble-bot">
+              <p className="chat-bubble-text">
+                ほかにご質問があれば選ぶか、そのまま入力してください。
+              </p>
+            </div>
+            <IntentQuickReplies
+              tree={intentTree}
+              path={intentPath}
+              disabled={isRunning}
+              onSelect={handleIntentSelect}
+            />
+          </div>
+        ) : null}
+
+        {sampleTurnsExhausted && !isRunning ? (
+          <div className="chat-row chat-row-bot">
+            <div className="chat-bubble chat-bubble-bot">
+              <p className="chat-bubble-text">
+                サンプル体験はここまでです。「最初からやり直す」で同じ業種の会話を再開するか、左上のアイコンで業種選択に戻れます。
+              </p>
+            </div>
+          </div>
+        ) : null}
 
         {isRunning ? (
           <div className="chat-row chat-row-bot">
@@ -461,11 +564,17 @@ export function ConversationShell({
           className="conversation-composer-input"
           rows={1}
           value={draft}
-          disabled={isRunning || pack.documents.length === 0}
+          disabled={
+            isRunning || pack.documents.length === 0 || sampleTurnsExhausted
+          }
           placeholder={
             pack.documents.length === 0
-              ? "先にマイFAQへ文書を追加してください"
-              : "メッセージを入力"
+              ? "先にお試しナレッジへ文書を追加してください"
+              : sampleTurnsExhausted
+                ? "サンプル質問は上限です"
+                : turns.length > 0
+                  ? "続けて質問できます"
+                  : "メッセージを入力"
           }
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleComposerKeyDown}
@@ -473,7 +582,12 @@ export function ConversationShell({
         <button
           type="submit"
           className="conversation-composer-submit"
-          disabled={isRunning || !draft.trim() || pack.documents.length === 0}
+          disabled={
+            isRunning ||
+            !draft.trim() ||
+            pack.documents.length === 0 ||
+            sampleTurnsExhausted
+          }
         >
           送信
         </button>
