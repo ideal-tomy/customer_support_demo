@@ -1,0 +1,10 @@
+{
+  "packId": "beauty-salon-v1",
+  "name": "Beauty Salon Lueur ご利用案内",
+  "companyName": "Beauty Salon Lueur（架空）",
+  "isFictional": true,
+  "version": "1.0.0",
+  "documentCount": 10,
+  "categories": ["メニュー", "予約", "注意事項", "料金"],
+  "lastUpdated": "2026-07-17"
+}

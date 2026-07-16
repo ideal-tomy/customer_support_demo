@@ -1,0 +1,26 @@
+{
+  "packId": "restaurant-v1",
+  "version": "1.0.0",
+  "roots": [
+    {
+      "id": "intent-hours",
+      "label": "営業時間",
+      "guidedQuestionId": "gq-hours-holiday"
+    },
+    {
+      "id": "intent-course-budget",
+      "label": "コース・予算",
+      "guidedQuestionId": "gq-course-5k-drink"
+    },
+    {
+      "id": "intent-allergy",
+      "label": "アレルギー",
+      "guidedQuestionId": "gq-dairy-allergy"
+    },
+    {
+      "id": "intent-vacancy",
+      "label": "空席・予約",
+      "guidedQuestionId": "gq-vacancy-today-19"
+    }
+  ]
+}

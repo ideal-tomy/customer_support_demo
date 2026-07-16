@@ -1,0 +1,28 @@
+{
+  "id": "takeout",
+  "title": "テイクアウト案内",
+  "version": "1.0",
+  "effectiveDate": "2026-04-01",
+  "ownerDepartment": "キッチン",
+  "summary": "テイクアウトの対象・受付時間の案内です。",
+  "sections": [
+    {
+      "id": "takeout-items",
+      "title": "対象商品",
+      "articleNumber": "1",
+      "body": "季節の弁当・一部一品のテイクアウトに対応（デモ想定）。コース料理のテイクアウトは原則不可です。詳細は店舗へご確認ください。"
+    },
+    {
+      "id": "takeout-hours",
+      "title": "受付・受取",
+      "articleNumber": "2",
+      "body": "ランチ時間帯を中心に受付。受取は店舗カウンターです。予約が必要な場合は前日までにご連絡ください。"
+    },
+    {
+      "id": "takeout-allergy",
+      "title": "アレルギー",
+      "articleNumber": "3",
+      "body": "テイクアウトも店内のアレルギー対応方針に準じます。完全除去・絶対安全は保証しません。"
+    }
+  ]
+}

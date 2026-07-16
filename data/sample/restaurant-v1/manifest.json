@@ -1,0 +1,10 @@
+{
+  "packId": "restaurant-v1",
+  "name": "旬菜ダイニング 灯 ご予約案内",
+  "companyName": "旬菜ダイニング 灯（架空）",
+  "isFictional": true,
+  "version": "1.0.0",
+  "documentCount": 9,
+  "categories": ["店舗", "メニュー", "コース", "アレルギー", "予約"],
+  "lastUpdated": "2026-07-17"
+}

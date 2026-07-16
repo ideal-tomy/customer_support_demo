@@ -1,0 +1,26 @@
+{
+  "packId": "beauty-salon-v1",
+  "version": "1.0.0",
+  "roots": [
+    {
+      "id": "intent-first-facial",
+      "label": "初めてのメニュー",
+      "guidedQuestionId": "gq-first-facial"
+    },
+    {
+      "id": "intent-dry-skin",
+      "label": "乾燥が気になる",
+      "guidedQuestionId": "gq-dry-skin-menu"
+    },
+    {
+      "id": "intent-late",
+      "label": "予約・遅刻",
+      "guidedQuestionId": "gq-late-15min"
+    },
+    {
+      "id": "intent-staff",
+      "label": "スタッフに相談",
+      "guidedQuestionId": "gq-pain-redness"
+    }
+  ]
+}

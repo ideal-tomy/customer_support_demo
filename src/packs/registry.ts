@@ -1,32 +1,19 @@
 import { useSyncExternalStore } from "react";
+import { beautySalonPack } from "./beauty-salon";
+import { restaurantPack } from "./restaurant";
 import { retailCommercePack } from "./retail-commerce";
 import type {
   CustomerSupportPack,
   IndustryId,
   PackRegistryEntry,
-  UnavailablePack,
 } from "./types";
 
 const STORAGE_INDUSTRY_KEY = "cs-industry-pack-v1";
 
-const restaurantStub: UnavailablePack = {
-  industry: "restaurant",
-  available: false,
-  label: "飲食店",
-  description: "準備中（旬菜ダイニング 灯）",
-};
-
-const beautyStub: UnavailablePack = {
-  industry: "beauty-salon",
-  available: false,
-  label: "エステ・美容",
-  description: "準備中（Beauty Salon Lueur）",
-};
-
 export const packRegistry: PackRegistryEntry[] = [
   retailCommercePack,
-  restaurantStub,
-  beautyStub,
+  restaurantPack,
+  beautySalonPack,
 ];
 
 const listeners = new Set<() => void>();
