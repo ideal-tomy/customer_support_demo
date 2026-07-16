@@ -1,0 +1,10 @@
+{
+  "packId": "retail-commerce-v1",
+  "name": "東和ライフストア ご利用ガイド",
+  "companyName": "東和ライフストア（架空）",
+  "isFictional": true,
+  "version": "1.0.0",
+  "documentCount": 8,
+  "categories": ["商品", "配送", "返品", "保証", "支払い"],
+  "lastUpdated": "2026-07-17"
+}

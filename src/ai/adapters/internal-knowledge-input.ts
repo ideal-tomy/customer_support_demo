@@ -1,5 +1,6 @@
 import type { AiRequest } from "@axeon/ai-demo-core/types/provider";
 import type { AiProvider } from "@axeon/ai-demo-core/types/access-mode";
+import { getActiveIndustryPack } from "../../packs/registry";
 import type { ScoredChunk } from "../retrieve";
 
 export function buildInternalKnowledgeSchemaHint(): string {
@@ -46,13 +47,11 @@ Rules:
 }
 
 export function buildInternalKnowledgeSystemPrompt(): string {
+  const pack = getActiveIndustryPack();
   return [
-    "あなたは東和ソリューションズのカスタマーサポートAI「トワ」です。",
-    "与えられたFAQ・ポリシー・カタログ文章だけを根拠に、お客様へ丁寧に案内してください。",
-    "ナレッジにない約束（特別値引き、個別例外の確定など）をしないこと。",
-    "期限・送料負担・申請手順を正確に扱うこと。不明点は確認事項として返すこと。",
-    "最終的な個別判断や補償の確定は有人サポートへ案内すること。",
+    ...pack.systemPromptIntro,
     buildInternalKnowledgeSchemaHint(),
+    pack.promptOverlay,
   ].join("\n");
 }
 

@@ -16,6 +16,9 @@ const SYNONYM_GROUPS: string[][] = [
   ["送料", "着払い", "運賃"],
   ["マイページ", "注文", "申請"],
   ["不良", "破損", "誤配送", "初期不良"],
+  ["加湿器", "Luna", "Mist", "加湿"],
+  ["保証", "修理", "保証期間"],
+  ["在庫", "取り寄せ", "入荷"],
 ];
 
 function expandTokens(question: string): string[] {

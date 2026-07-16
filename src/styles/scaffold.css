@@ -797,6 +797,38 @@ body {
   font-family: "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
 }
 
+.knowledge-industry-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.knowledge-industry-btn {
+  flex: 1 1 auto;
+  min-height: 34px;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid #d0d6dd;
+  border-radius: 6px;
+  background: #fafbfc;
+  color: #3d4650;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.knowledge-industry-btn.is-active {
+  border-color: var(--cs-green, #1d9e75);
+  background: var(--cs-green-soft, #e1f5ee);
+  color: var(--cs-green-ink, #085041);
+}
+
+.knowledge-industry-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .knowledge-pack-tabs {
   display: flex;
   gap: 0.35rem;

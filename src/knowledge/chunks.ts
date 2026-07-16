@@ -1,4 +1,5 @@
-import { sampleDocuments, type KnowledgeDocument } from "./sample-pack";
+import { getActiveIndustryPack } from "../packs/registry";
+import type { KnowledgeDocument } from "../types/pack-shared";
 
 export type KnowledgeChunk = {
   id: string;
@@ -43,11 +44,20 @@ export function buildChunksFromDocuments(
   return documents.flatMap(buildChunksFromDocument);
 }
 
-let cachedSampleChunks: KnowledgeChunk[] | null = null;
+let cachedKey: string | null = null;
+let cachedChunks: KnowledgeChunk[] | null = null;
 
 export function getSampleChunks(): KnowledgeChunk[] {
-  if (!cachedSampleChunks) {
-    cachedSampleChunks = buildChunksFromDocuments(sampleDocuments);
+  const pack = getActiveIndustryPack();
+  const key = pack.manifest.packId;
+  if (!cachedChunks || cachedKey !== key) {
+    cachedKey = key;
+    cachedChunks = buildChunksFromDocuments(pack.documents);
   }
-  return cachedSampleChunks;
+  return cachedChunks;
+}
+
+export function invalidateSampleChunksCache(): void {
+  cachedKey = null;
+  cachedChunks = null;
 }

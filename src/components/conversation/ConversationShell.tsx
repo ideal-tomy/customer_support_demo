@@ -16,7 +16,7 @@ import { askInternalKnowledge } from "../../ai/askInternalKnowledge";
 import {
   findFixtureByGuidedQuestionId,
   findGuidedQuestion,
-  phase3IntentTree,
+  getPhase3IntentTree,
 } from "../../mocks/guided-questions";
 import {
   findActiveDocument,
@@ -29,11 +29,12 @@ import type {
   Citation,
   FollowUpChip,
   IntentNode,
+  IntentTree,
   MissingInfoChoice,
 } from "../../types/internal-knowledge";
 
 const SAMPLE_WELCOME_LINES = [
-  "こんにちは！東和ソリューションズのトワです。ご用件を選ぶか、そのまま入力してください。",
+  "こんにちは！東和ライフストアのトワです。商品選び・配送・返品など、ご用件を選ぶかそのまま入力してください。",
 ];
 
 const CUSTOM_WELCOME_LINES = [
@@ -71,6 +72,7 @@ export function ConversationShell({
 }: ConversationShellProps) {
   const { isRunning, result, error, runAsk, reset } = useAskFlow();
   const pack = useKnowledgePack();
+  const intentTree = getPhase3IntentTree() as IntentTree;
   const [turns, setTurns] = useState<ThreadTurn[]>([]);
   const [intentPath, setIntentPath] = useState<IntentNode[]>([]);
   const [intentSelections, setIntentSelections] = useState<IntentSelection[]>([]);
@@ -329,7 +331,7 @@ export function ConversationShell({
           </div>
           {showIntentUi && intentPath.length === 0 ? (
             <IntentQuickReplies
-              tree={phase3IntentTree}
+              tree={intentTree}
               path={intentPath}
               disabled={isRunning}
               onSelect={handleIntentSelect}
@@ -355,7 +357,7 @@ export function ConversationShell({
                 </div>
                 {showNextChips ? (
                   <IntentQuickReplies
-                    tree={phase3IntentTree}
+                    tree={intentTree}
                     path={intentPath}
                     disabled={isRunning}
                     onSelect={handleIntentSelect}

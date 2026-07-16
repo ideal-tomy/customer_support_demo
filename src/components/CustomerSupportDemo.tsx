@@ -46,10 +46,10 @@ export function CustomerSupportDemo() {
           <div className="cs-header-main">
             <TowaAvatar size={38} />
             <div className="cs-header-text">
-              <h1 className="chat-app-title">トワちゃん サポート</h1>
+              <h1 className="chat-app-title">{pack.uiLabels.supportTitle}</h1>
               <p className="cs-header-status">
                 <span className="cs-status-dot" aria-hidden="true" />
-                AIが対応中・24時間受付
+                {pack.uiLabels.statusLine}
               </p>
             </div>
           </div>
@@ -62,9 +62,11 @@ export function CustomerSupportDemo() {
                   : "chat-app-pack-badge is-custom"
               }
               onClick={() => setSheet("knowledge")}
-              title="FAQ / カタログを切り替え"
+              title={pack.uiLabels.knowledgeSheetTitle}
             >
-              {pack.isSample ? "サンプルFAQ" : "マイFAQ"}
+              {pack.isSample
+                ? pack.uiLabels.sampleTabLabel
+                : pack.uiLabels.customTabLabel}
             </button>
             <button
               type="button"
@@ -101,7 +103,7 @@ export function CustomerSupportDemo() {
 
       <BottomSheet
         open={sheet === "knowledge"}
-        title="FAQ / カタログ"
+        title={pack.uiLabels.knowledgeSheetTitle}
         onClose={() => setSheet("none")}
       >
         <KnowledgePanel

@@ -15,9 +15,9 @@ import {
 } from "../access/ik-settings";
 import {
   findFixtureByGuidedQuestionId,
-  sampleOutputByKeyword,
+  getSampleOutputByKeyword,
 } from "../mocks/guided-questions";
-import { answerSkeletonFixtures } from "../mocks/answer-skeleton-fixtures";
+import { getAnswerSkeletonFixtures } from "../mocks/answer-skeleton-fixtures";
 import type { InternalKnowledgeOutput } from "../types/internal-knowledge";
 import { buildInternalKnowledgeAiRequest } from "./adapters/internal-knowledge-input";
 import {
@@ -32,12 +32,12 @@ import { retrieveChunks } from "./retrieve";
 
 function matchKnownSampleOutput(question: string): InternalKnowledgeOutput | null {
   const normalized = question.replace(/\s+/g, "");
-  for (const fixture of answerSkeletonFixtures) {
+  for (const fixture of getAnswerSkeletonFixtures()) {
     if (normalized.includes(fixture.question.replace(/\s+/g, "").slice(0, 8))) {
       return fixture.output;
     }
   }
-  for (const row of sampleOutputByKeyword) {
+  for (const row of getSampleOutputByKeyword()) {
     if (row.needles.some((n) => normalized.includes(n))) {
       return row.output;
     }

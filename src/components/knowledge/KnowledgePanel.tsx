@@ -289,6 +289,10 @@ export function KnowledgePanel({ activeTarget, onSelectDocument }: KnowledgePane
     customDocuments,
     manifest,
     setSource,
+    uiLabels,
+    industryRegistry,
+    industryId,
+    setIndustry,
   } = useKnowledgePack();
 
   const activeDocument =
@@ -300,7 +304,33 @@ export function KnowledgePanel({ activeTarget, onSelectDocument }: KnowledgePane
 
   return (
     <div className="knowledge-panel">
-      <div className="knowledge-pack-tabs" role="tablist" aria-label="FAQパック">
+      <div className="knowledge-industry-picker" role="group" aria-label="業種パック">
+        {industryRegistry.map((entry) => {
+          const selected = entry.industry === industryId;
+          const disabled = !entry.available;
+          const label = entry.available
+            ? entry.brand.storeName
+            : `${entry.label}（準備中）`;
+          return (
+            <button
+              key={entry.industry}
+              type="button"
+              className={
+                selected
+                  ? "knowledge-industry-btn is-active"
+                  : "knowledge-industry-btn"
+              }
+              disabled={disabled}
+              title={entry.available ? undefined : entry.description}
+              onClick={() => setIndustry(entry.industry)}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="knowledge-pack-tabs" role="tablist" aria-label={uiLabels.knowledgeSheetTitle}>
         <button
           type="button"
           role="tab"
@@ -312,7 +342,7 @@ export function KnowledgePanel({ activeTarget, onSelectDocument }: KnowledgePane
           }
           onClick={() => handleTab("sample")}
         >
-          サンプルFAQ
+          {uiLabels.sampleTabLabel}
         </button>
         <button
           type="button"
@@ -325,7 +355,7 @@ export function KnowledgePanel({ activeTarget, onSelectDocument }: KnowledgePane
           }
           onClick={() => handleTab("custom")}
         >
-          マイFAQ
+          {uiLabels.customTabLabel}
           {customDocuments.length > 0 ? (
             <span className="knowledge-pack-tab-count">{customDocuments.length}</span>
           ) : null}
@@ -333,7 +363,7 @@ export function KnowledgePanel({ activeTarget, onSelectDocument }: KnowledgePane
       </div>
 
       <header className="knowledge-pack-summary">
-        <p className="knowledge-pack-eyebrow">Support Knowledge</p>
+        <p className="knowledge-pack-eyebrow">{uiLabels.knowledgeEyebrow}</p>
         <h2 className="knowledge-pack-title">{manifest.name}</h2>
         <p className="knowledge-pack-company">
           {manifest.companyName}

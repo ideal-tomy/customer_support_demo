@@ -1,51 +1,58 @@
-import type { GuidedQuestionDef, IntentTree } from "../types/internal-knowledge";
-import intentTreeJson from "../../data/sample/towa-customer-support-v1/intent-tree.json";
-import {
-  answerSkeletonFixtures,
-  fixtureBillingReceipt,
-  fixtureReturnPolicy,
-  fixtureTrackShipping,
-} from "./answer-skeleton-fixtures";
+import type { GuidedQuestionDef, IntentTree } from "../types/pack-shared";
+import { getActiveIndustryPack } from "../packs/registry";
+import { getAnswerSkeletonFixtures } from "./answer-skeleton-fixtures";
 
-export const phase3IntentTree = intentTreeJson as IntentTree;
+export function getPhase3IntentTree(): IntentTree {
+  return getActiveIndustryPack().intentTree;
+}
 
-export const guidedQuestions: GuidedQuestionDef[] = [
-  {
-    id: "gq-track-shipping",
-    question: "配送状況を確認したいです。どこで見られますか。",
-    fixtureId: "track-shipping",
-    difficulty: 1,
+/** @deprecated Prefer getPhase3IntentTree() */
+export const phase3IntentTree = new Proxy({} as IntentTree, {
+  get(_t, prop) {
+    return Reflect.get(getPhase3IntentTree(), prop);
   },
-  {
-    id: "gq-return-policy",
-    question: "返品したいです。条件と期限を教えてください。",
-    fixtureId: "return-policy",
-    difficulty: 1,
+});
+
+export function getGuidedQuestions(): GuidedQuestionDef[] {
+  return getActiveIndustryPack().guidedQuestions;
+}
+
+export const guidedQuestions = new Proxy([] as GuidedQuestionDef[], {
+  get(_t, prop) {
+    const list = getGuidedQuestions();
+    if (prop === "length") return list.length;
+    if (prop === Symbol.iterator) return list[Symbol.iterator].bind(list);
+    if (typeof prop === "string" && /^\d+$/.test(prop)) return list[Number(prop)];
+    const value = Reflect.get(list, prop);
+    return typeof value === "function" ? value.bind(list) : value;
   },
-  {
-    id: "gq-billing-receipt",
-    question: "領収書を発行したいです。",
-    fixtureId: "billing-receipt",
-    difficulty: 1,
-  },
-];
+});
 
 export function findGuidedQuestion(id: string): GuidedQuestionDef | undefined {
-  return guidedQuestions.find((q) => q.id === id);
+  return getGuidedQuestions().find((q) => q.id === id);
 }
 
 export function findFixtureByGuidedQuestionId(guidedQuestionId: string) {
   const guided = findGuidedQuestion(guidedQuestionId);
   if (!guided) return undefined;
-  return answerSkeletonFixtures.find((f) => f.id === guided.fixtureId);
+  return getAnswerSkeletonFixtures().find((f) => f.id === guided.fixtureId);
 }
 
-/** Sample-mode keyword shortcuts used by askInternalKnowledge. */
-export const sampleOutputByKeyword: Array<{
-  needles: string[];
-  output: typeof fixtureReturnPolicy;
-}> = [
-  { needles: ["返品", "交換"], output: fixtureReturnPolicy },
-  { needles: ["配送", "追跡", "届"], output: fixtureTrackShipping },
-  { needles: ["領収", "請求", "支払い"], output: fixtureBillingReceipt },
-];
+export function getSampleOutputByKeyword() {
+  return getActiveIndustryPack().keywordFixtures;
+}
+
+/** @deprecated */
+export const sampleOutputByKeyword = new Proxy(
+  [] as ReturnType<typeof getSampleOutputByKeyword>,
+  {
+    get(_t, prop) {
+      const list = getSampleOutputByKeyword();
+      if (prop === "length") return list.length;
+      if (prop === Symbol.iterator) return list[Symbol.iterator].bind(list);
+      if (typeof prop === "string" && /^\d+$/.test(prop)) return list[Number(prop)];
+      const value = Reflect.get(list, prop);
+      return typeof value === "function" ? value.bind(list) : value;
+    },
+  },
+);

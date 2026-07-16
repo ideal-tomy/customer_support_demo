@@ -1,0 +1,28 @@
+{
+  "id": "product-comparison",
+  "title": "商品比較ガイド",
+  "version": "1.0",
+  "effectiveDate": "2026-04-01",
+  "ownerDepartment": "EC運営",
+  "summary": "加湿器 Mini と Pro など、価格以外の違いと向き不向きを整理します。",
+  "sections": [
+    {
+      "id": "humidifier-compare",
+      "title": "加湿器 Mini と Pro の違い",
+      "articleNumber": "1",
+      "body": "Luna Mist Mini（8,800円）は幅18cm・約8時間運転・木造5畳／洋室8畳目安で、一人暮らしや狭い部屋向けです。Luna Mist Pro（14,800円）は約16時間運転・木造8畳／洋室14畳目安で、広い部屋向けです。どちらもタンク着脱洗浄に対応。手入れしやすさで選ぶならどちらも候補ですが、置きやすさ重視なら Mini、広さ・連続運転重視なら Pro が候補です。"
+    },
+    {
+      "id": "how-to-choose",
+      "title": "選び方の目安",
+      "articleNumber": "2",
+      "body": "確認するとよい条件は、(1)部屋の広さ、(2)手入れの頻度、(3)予算です。部屋が洋室8畳を超える場合は Pro を候補に含めてください。「最適」「必ず合う」とは断定せず、カタログ仕様に基づく候補としてご案内します。"
+    },
+    {
+      "id": "mini-vs-pro-table",
+      "title": "比較ポイント一覧",
+      "articleNumber": "3",
+      "body": "価格: Mini 8,800円／Pro 14,800円。サイズ: Mini の方が小さい。連続運転: Mini 約8時間／Pro 約16時間。騒音: Mini 約28dB／Pro 約30dB。対応畳数目安: Mini 木造5・洋室8／Pro 木造8・洋室14。"
+    }
+  ]
+}

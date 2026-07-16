@@ -1,0 +1,21 @@
+{
+  "packId": "retail-commerce-v1",
+  "version": "1.0.0",
+  "roots": [
+    {
+      "id": "intent-return-deadline",
+      "label": "返品期限を確認",
+      "guidedQuestionId": "gq-return-deadline"
+    },
+    {
+      "id": "intent-product-pick",
+      "label": "商品を選びたい",
+      "guidedQuestionId": "gq-humidifier-pick"
+    },
+    {
+      "id": "intent-shipping-status",
+      "label": "配送状況を確認",
+      "guidedQuestionId": "gq-shipping-track"
+    }
+  ]
+}

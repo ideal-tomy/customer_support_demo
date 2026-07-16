@@ -1,16 +1,19 @@
 import { useSyncExternalStore } from "react";
-import { buildChunksFromDocuments, type KnowledgeChunk } from "./chunks";
+import { buildChunksFromDocuments, invalidateSampleChunksCache, type KnowledgeChunk } from "./chunks";
 import {
   normalizeTextToDocument,
   titleFromFileName,
 } from "./normalize-text";
 import {
-  sampleDocuments,
-  samplePackManifest,
-  type KnowledgeDocument,
-  type KnowledgePackManifest,
-  type KnowledgeSection,
-} from "./sample-pack";
+  getActiveIndustryPack,
+  getIndustryRevision,
+  useIndustryPack,
+} from "../packs/registry";
+import type {
+  KnowledgeDocument,
+  KnowledgePackManifest,
+  KnowledgeSection,
+} from "../types/pack-shared";
 
 export type PackSource = "sample" | "custom";
 
@@ -131,13 +134,13 @@ export function getActivePackSource(): PackSource {
 export function getActiveDocuments(): KnowledgeDocument[] {
   return snapshot.source === "custom"
     ? snapshot.customDocuments
-    : sampleDocuments;
+    : getActiveIndustryPack().documents;
 }
 
 export function getActiveManifest(): KnowledgePackManifest {
   return snapshot.source === "custom"
     ? customManifest(snapshot.customDocuments)
-    : samplePackManifest;
+    : getActiveIndustryPack().manifest;
 }
 
 export function getActiveChunks(): KnowledgeChunk[] {
@@ -264,23 +267,36 @@ export function clearCustomPack(): void {
   emit();
 }
 
-/** React 向け: Active Pack の購読。 */
+/** React 向け: Active Pack の購読（FAQ source + 業種パック）。 */
 export function useKnowledgePack() {
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const industry = useIndustryPack();
   const documents =
-    state.source === "custom" ? state.customDocuments : sampleDocuments;
+    state.source === "custom"
+      ? state.customDocuments
+      : industry.pack.documents;
   const manifest =
     state.source === "custom"
       ? customManifest(state.customDocuments)
-      : samplePackManifest;
+      : industry.pack.manifest;
 
   return {
     source: state.source,
-    revision: state.revision,
+    revision: state.revision + industry.revision + getIndustryRevision(),
     documents,
     customDocuments: state.customDocuments,
     manifest,
     isSample: state.source === "sample",
+    uiLabels: industry.pack.uiLabels,
+    brand: industry.pack.brand,
+    industryId: industry.industryId,
+    industryPack: industry.pack,
+    industryRegistry: industry.registry,
+    setIndustry: (next: Parameters<typeof industry.setIndustry>[0]) => {
+      const ok = industry.setIndustry(next);
+      if (ok) invalidateSampleChunksCache();
+      return ok;
+    },
     setSource: setActivePackSource,
     addFromText: addCustomDocumentFromText,
     addFromFile: addCustomDocumentFromFile,

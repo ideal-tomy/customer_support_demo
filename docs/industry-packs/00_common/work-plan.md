@@ -13,37 +13,35 @@
 | 0.3 | 業種別ふるまい・質問・固定ルールの整理 | 各業種 `README.md` | 完了 |
 | 0.4 | サンプルナレッジの文書単位仕様 | 各業種 `knowledge/*.md` | 完了 |
 
-**受け入れ:** knowledge 仕様が揃い、本文作成（小売から）に入れる状態。
+**受け入れ:** knowledge 仕様が揃い、本文作成（小売から）に入れる状態。 → **達成済み**
 
 ---
 
 ## Phase 1 — パック基盤（コード）
 
-| # | 作業 | 内容 |
-|---|------|------|
-| 1.1 | `CustomerSupportPack` 型の導入 | industry / brand / documents / sampleQuestions / rules / promptOverlay / escalation / actions |
-| 1.2 | パックレジストリ | `retail-commerce`（必須）→ 後で restaurant / beauty-salon |
-| 1.3 | UI の業種切替 or 初期パック切替 | デモ開始時に業種を選べる、または URL / config で固定 |
-| 1.4 | 表示名の業種別差し替え | 「FAQ/カタログ」→ 業種ごとの名称（[`ui-improvements.md`](ui-improvements.md)） |
-| 1.5 | 固定回答 / AI+ナレッジ / 有人 の役割分担を ask 経路に明示 | [`answer-layers.md`](answer-layers.md) |
+| # | 作業 | 内容 | 状態 |
+|---|------|------|------|
+| 1.1 | `CustomerSupportPack` 型の導入 | `src/packs/types.ts` | 完了 |
+| 1.2 | パックレジストリ | retail 実装、restaurant/beauty は disabled | 完了 |
+| 1.3 | UI の業種切替 | Knowledge シート先頭の業種ピッカー | 完了 |
+| 1.4 | 表示名の業種別差し替え | uiLabels（商品・ご利用ガイド等） | 完了 |
+| 1.5 | 固定回答 / AI+ナレッジ / 有人 | fixtures + promptOverlay + escalate | 完了 |
 
-**受け入れ:** パックを差し替えるとブランド名・ガイド質問・ナレッジが一括で変わる。
+**受け入れ:** パックを差し替えるとブランド名・ガイド質問・ナレッジが一括で変わる。 → **小売のみ有効で達成**（他業種は準備中）
 
 ---
 
 ## Phase 2 — 小売・EC パック（本命）
 
-| # | 作業 | 内容 |
-|---|------|------|
-| 2.1 | 架空店舗「東和ライフストア」のブランド設定 | 名前・色・ウェルカム文言 |
-| 2.2 | knowledge 仕様に沿った本文作成 | `01_retail-commerce/knowledge/*.md` → `data/sample/retail-commerce-v1/` |
-| 2.3 | Layer 1 固定回答（営業時間外でも使える定型） | 送料、支払い、領収書など |
-| 2.4 | Layer 2 AI 横断シナリオ | 商品比較、返品×保証、条件付き提案 |
-| 2.5 | Layer 3 デモ演出 | 配送状況（注文番号入力→テンプレート／モック API） |
-| 2.6 | ガイド質問・fixture・intent tree | 3段階デモ（単一FAQ→横断→業務連携） |
-| 2.7 | 固定返信ルールを promptOverlay / ガードに反映 | 在庫断定禁止、決済情報要求禁止など |
-
-**受け入れ:** 参考の「最も魅力的なデモ構成（小売）」の質問1〜3が体験できる。
+| # | 作業 | 内容 | 状態 |
+|---|------|------|------|
+| 2.1 | 架空店舗「東和ライフストア」のブランド設定 | retail-commerce pack | 完了 |
+| 2.2 | knowledge 仕様に沿った本文作成 | `data/sample/retail-commerce-v1/` | 完了 |
+| 2.3 | Layer 1 固定回答 | fixtures（返品期限・領収書等） | 完了（一部） |
+| 2.4 | Layer 2 AI 横断シナリオ | 初期不良×保証 fixture | 完了（一部） |
+| 2.5 | Layer 3 デモ演出 | 配送は escalate／要確認（モックAPIは未） | 一部 |
+| 2.6 | ガイド質問・fixture・intent tree | 完了 |
+| 2.7 | 固定返信ルールを promptOverlay | 完了 |
 
 ---
 

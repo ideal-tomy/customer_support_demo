@@ -1,47 +1,27 @@
 import type { Citation } from "../types/internal-knowledge";
-import manifestJson from "../../data/sample/towa-customer-support-v1/manifest.json";
-import returnDoc from "../../data/sample/towa-customer-support-v1/documents/return-exchange-policy.json";
-import shippingDoc from "../../data/sample/towa-customer-support-v1/documents/shipping-faq.json";
-import billingDoc from "../../data/sample/towa-customer-support-v1/documents/billing-faq.json";
+import { getActiveIndustryPack } from "../packs/registry";
+import type {
+  KnowledgeDocument,
+  KnowledgePackManifest,
+  KnowledgeSection,
+} from "../types/pack-shared";
 
-export type KnowledgeSection = {
-  id: string;
-  title: string;
-  articleNumber?: string;
-  body: string;
-};
+export type {
+  KnowledgeDocument,
+  KnowledgePackManifest,
+  KnowledgeSection,
+} from "../types/pack-shared";
 
-export type KnowledgeDocument = {
-  id: string;
-  title: string;
-  version: string;
-  effectiveDate: string;
-  ownerDepartment: string;
-  summary: string;
-  sections: KnowledgeSection[];
-};
+export function getSamplePackManifest(): KnowledgePackManifest {
+  return getActiveIndustryPack().manifest;
+}
 
-export type KnowledgePackManifest = {
-  packId: string;
-  name: string;
-  companyName: string;
-  isFictional: boolean;
-  version: string;
-  documentCount: number;
-  categories: string[];
-  lastUpdated: string;
-};
-
-export const samplePackManifest = manifestJson as KnowledgePackManifest;
-
-export const sampleDocuments: KnowledgeDocument[] = [
-  returnDoc as KnowledgeDocument,
-  shippingDoc as KnowledgeDocument,
-  billingDoc as KnowledgeDocument,
-];
+export function getSampleDocuments(): KnowledgeDocument[] {
+  return getActiveIndustryPack().documents;
+}
 
 export function findSampleDocument(documentId: string): KnowledgeDocument | undefined {
-  return sampleDocuments.find((doc) => doc.id === documentId);
+  return getSampleDocuments().find((doc) => doc.id === documentId);
 }
 
 export function findSection(

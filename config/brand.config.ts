@@ -1,8 +1,8 @@
 export const brandConfig = {
-  brandId: "towa-support",
-  id: "towa-support",
+  brandId: "towa-lifestore",
+  id: "towa-lifestore",
   brandName: "トワちゃん サポート",
-  companyName: "東和ソリューションズ株式会社",
+  companyName: "東和ライフストア",
   productName: "トワちゃん サポート",
   logo: "",
   accentColor: "#0F6E56",

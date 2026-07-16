@@ -85,9 +85,7 @@ docs/industry-packs/
 
 ## 現状コードとの関係（Phase 0）
 
-現在のサンプルは汎用 CS FAQ（返品・配送・請求）:
+現在のサンプルは小売パック:
 
-- `data/sample/towa-customer-support-v1/`
-
-小売パック完成後は、これを `retail-commerce` 相当へ置き換えるか、業種切替の初期パックにします。  
-業種3つを別アプリにせず、**同一デモ＋業種別パック**として拡張します。
+- `data/sample/retail-commerce-v1/`（東和ライフストア・8文書）
+- 業種レジストリ: `src/packs/`（飲食・エステは準備中）

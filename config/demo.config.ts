@@ -5,7 +5,7 @@ export const demoConfig = {
   demoName: "カスタマーサポートAI",
   name: "カスタマーサポートAI",
   description:
-    "FAQ・返品ポリシー等を根拠に、顧客向けチャットで自己解決と有人導線を体験するデモ",
+    "東和ライフストア向け：FAQ・カタログを根拠に接客し、自社ナレッジ投入も試せるチャットデモ",
   demoType: "chat" as const,
   defaultMode: "sample" as const,
   defaultAccessMode: "sample" as const,
