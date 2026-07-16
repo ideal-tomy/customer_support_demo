@@ -1,0 +1,10 @@
+{
+  "packId": "towa-customer-support-v1",
+  "name": "東和ソリューションズ カスタマーサポートFAQ",
+  "companyName": "東和ソリューションズ株式会社",
+  "isFictional": true,
+  "version": "1.0.0",
+  "documentCount": 3,
+  "categories": ["配送", "返品・交換", "請求"],
+  "lastUpdated": "2026-07-17"
+}
