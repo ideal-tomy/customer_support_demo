@@ -1,5 +1,9 @@
 import { useSyncExternalStore } from "react";
-import type { AnswerStatus } from "../types/internal-knowledge";
+import type {
+  AnswerBlocks,
+  AnswerStatus,
+  FollowUpAction,
+} from "../types/internal-knowledge";
 
 const STORAGE_KEY = "cs-demo-explain-v1";
 
@@ -50,6 +54,15 @@ export type AskSource =
   | "llm"
   | "llm-empty-fallback";
 
+const ACTION_TYPE_LABEL: Record<FollowUpAction, string> = {
+  resend_variant: "条件を変えて再質問",
+  open_evidence: "根拠を開く",
+  open_document: "ご案内を開く",
+  clarify: "確認の選択",
+  ask_related: "関連質問",
+  escalate_human: "有人へつなぐ",
+};
+
 /** Demo explain mode label for technical audiences. */
 export function formatAnswerMethodLabel(
   source: AskSource,
@@ -65,4 +78,34 @@ export function formatAnswerMethodLabel(
     return "回答方式: AI＋ナレッジ";
   }
   return "回答方式: AI＋ナレッジ（ローカル合成）";
+}
+
+export type MechanismCardLines = {
+  method: string;
+  evidence: string;
+  nextAction: string;
+};
+
+/** Three-line adoption card under an answer (demo explain ON). */
+export function buildMechanismCardLines(
+  source: AskSource,
+  blocks: AnswerBlocks,
+): MechanismCardLines {
+  const method = formatAnswerMethodLabel(source, blocks.status);
+  const titles = blocks.citations
+    .map((c) => c.documentTitle)
+    .filter(Boolean)
+    .slice(0, 2);
+  const evidence =
+    titles.length > 0
+      ? `根拠: ${titles.join(" / ")}`
+      : "根拠: （この回答では文書参照なし）";
+  const actions = blocks.followUps
+    .map((f) => ACTION_TYPE_LABEL[f.action] ?? f.label)
+    .slice(0, 3);
+  const nextAction =
+    actions.length > 0
+      ? `次アクション型: ${actions.join(" · ")}`
+      : "次アクション型: （未提示）";
+  return { method, evidence, nextAction };
 }

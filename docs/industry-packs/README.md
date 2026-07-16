@@ -43,6 +43,8 @@ docs/industry-packs/
 ├─ 00_common/
 │  ├─ work-plan.md                    ← 実装作業の順番（正）
 │  ├─ acceptance-checklist.md         ← 手動受け入れチェックリスト
+│  ├─ dual-lens-experience-plan.md    ← 顧客体験×導入訴求の次期大枠PLAN
+│  ├─ sales-scripts.md                ← 営業向け3分台本（A→B→C）
 │  ├─ answer-layers.md                ← 回答3層モデル
 │  ├─ pack-architecture.md            ← 共通構造・差し替え契約
 │  ├─ common-prompt.md                ← 全業種共通システムプロンプト
@@ -93,3 +95,7 @@ docs/industry-packs/
 - 業種レジストリ: `src/packs/`（3業種とも available）
 - 業種選択ファースト UX → チャット →「最初からやり直す」
 - Phase 5: 顧客向け参照表示・デモ説明モード・お試しナレッジ案内
+
+次期大枠（未実装の計画）:
+
+- [`00_common/dual-lens-experience-plan.md`](00_common/dual-lens-experience-plan.md) — Experience（利便）と Adoption（導入ロジック）の両立

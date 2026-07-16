@@ -336,6 +336,14 @@ export function KnowledgePanel({ activeTarget, onSelectDocument }: KnowledgePane
       <header className="knowledge-pack-summary">
         <p className="knowledge-pack-eyebrow">{uiLabels.knowledgeEyebrow}</p>
         <h2 className="knowledge-pack-title">{manifest.name}</h2>
+        <div className="knowledge-adopt-callout">
+          <p className="knowledge-adopt-title">自社の案内で試す</p>
+          <ol className="knowledge-adopt-steps">
+            <li>「お試しナレッジ」タブを開く</li>
+            <li>自社FAQやカタログを貼り付け／ファイル追加</li>
+            <li>チャットで同じUIのまま質問する</li>
+          </ol>
+        </div>
         <p className="knowledge-pack-company">
           {manifest.companyName}
           {manifest.isFictional ? "（架空）" : ""}

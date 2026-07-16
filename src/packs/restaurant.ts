@@ -33,7 +33,28 @@ const promptOverlay = `
 8. キャンセル料は日時・人数・コース有無の規定に忠実にする（前日18時まで無料／当日50%／無断100%）。
 9. 個別対応を確約せず、必要なら店舗確認へ案内する。
 10. 回答後に「予約する」「空席を確認」「店舗へ相談」のいずれかを案内する。
+11. followUps を必ず1〜3件返す（例: 空席を確認 / 予約する / 店舗へ相談）。
 `.trim();
+
+const defaultFollowUps = [
+  {
+    id: "fu-rest-vacancy",
+    label: "空席を確認",
+    action: "ask_related" as const,
+    payload: { guidedQuestionId: "gq-vacancy-today-19" },
+  },
+  {
+    id: "fu-rest-reserve",
+    label: "予約する",
+    action: "ask_related" as const,
+    payload: { guidedQuestionId: "gq-course-5k-drink" },
+  },
+  {
+    id: "fu-rest-human",
+    label: "店舗へ相談",
+    action: "escalate_human" as const,
+  },
+];
 
 export const restaurantGuidedQuestions: GuidedQuestionDef[] = [
   {
@@ -117,8 +138,6 @@ export const restaurantPack: CustomerSupportPack = {
     "あなたは旬菜ダイニング 灯のカスタマーサポートAIです。",
     "和食ダイニングのメニュー・コース・予約案内を担当します。",
     "与えられたメニュー・規約だけを根拠に、お客様へ丁寧に案内してください。",
-    "空席の有無を断定しないこと。アレルギーの完全安全を保証しないこと。",
-    "コース提案は候補提示に留め、価格・予約期限を正確に扱うこと。",
-    "不明点や個別対応は店舗確認・有人へ案内すること。",
   ],
+  defaultFollowUps,
 };

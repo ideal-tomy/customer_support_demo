@@ -24,17 +24,25 @@ import {
 import { getAnswerSkeletonFixtures } from "../mocks/answer-skeleton-fixtures";
 import type { InternalKnowledgeOutput } from "../types/internal-knowledge";
 import { resolveShippingTrackOutput } from "../packs/retail-fixtures";
-import { getActiveIndustryId } from "../packs/registry";
+import { getActiveIndustryId, getActiveIndustryPack } from "../packs/registry";
 import { buildInternalKnowledgeAiRequest } from "./adapters/internal-knowledge-input";
 import {
   parseInternalKnowledgeAiResult,
   synthesizeFromHits,
 } from "./adapters/internal-knowledge-output";
+import { ensureFollowUps } from "./follow-up-fallback";
 import {
   getActiveDocuments,
   isSamplePackActive,
 } from "../knowledge/pack-store";
 import { retrieveChunks } from "./retrieve";
+
+function withFollowUps(
+  output: InternalKnowledgeOutput,
+  question: string,
+): InternalKnowledgeOutput {
+  return ensureFollowUps(output, getActiveIndustryPack(), question);
+}
 
 function matchKnownSampleOutput(question: string): InternalKnowledgeOutput | null {
   const normalized = question.replace(/\s+/g, "");
@@ -103,7 +111,11 @@ export async function askInternalKnowledge(
       if (input.guidedQuestionId) {
         const fixture = findFixtureByGuidedQuestionId(input.guidedQuestionId);
         if (fixture) {
-          return { output: fixture.output, mode, source: "fixture" };
+          return {
+            output: withFollowUps(fixture.output, question),
+            mode,
+            source: "fixture",
+          };
         }
       }
       // 小売: 注文番号付き配送確認はインプロセス追跡モックを優先
@@ -111,7 +123,7 @@ export async function askInternalKnowledge(
         const orderId = extractOrderIdFromQuestion(question);
         if (orderId && lookupShippingTrackMock(orderId)) {
           return {
-            output: resolveShippingTrackOutput(question),
+            output: withFollowUps(resolveShippingTrackOutput(question), question),
             mode,
             source: "fixture",
           };
@@ -119,12 +131,16 @@ export async function askInternalKnowledge(
       }
       const known = matchKnownSampleOutput(question);
       if (known) {
-        return { output: known, mode, source: "fixture" };
+        return {
+          output: withFollowUps(known, question),
+          mode,
+          source: "fixture",
+        };
       }
     }
     const hits = retrieveChunks(question, { topK: 5 });
     return {
-      output: synthesizeFromHits(hits),
+      output: withFollowUps(synthesizeFromHits(hits), question),
       mode,
       source: "sample-retrieve",
     };
@@ -133,7 +149,7 @@ export async function askInternalKnowledge(
   const hits = retrieveChunks(question, { topK: 6 });
   if (hits.length === 0) {
     return {
-      output: synthesizeFromHits([]),
+      output: withFollowUps(synthesizeFromHits([]), question),
       mode,
       source: "sample-retrieve",
     };
@@ -178,9 +194,12 @@ export async function askInternalKnowledge(
 
     if (!response.text?.trim()) {
       return {
-        output: synthesizeFromHits(
-          hits,
-          "モデル応答が空だったため、検索結果を表示します。",
+        output: withFollowUps(
+          synthesizeFromHits(
+            hits,
+            "モデル応答が空だったため、検索結果を表示します。",
+          ),
+          question,
         ),
         mode,
         source: "llm-empty-fallback",
@@ -188,7 +207,10 @@ export async function askInternalKnowledge(
     }
 
     return {
-      output: parseInternalKnowledgeAiResult(response.text, hits),
+      output: withFollowUps(
+        parseInternalKnowledgeAiResult(response.text, hits),
+        question,
+      ),
       mode,
       source: "llm",
       remainingRequests: response.trialStatus?.remainingRequests,

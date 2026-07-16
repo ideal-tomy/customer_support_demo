@@ -33,7 +33,28 @@ const promptOverlay = `
 10. 緊急性が疑われる内容はチャット継続せず医療機関へ案内する。
 11. 料金・時間・キャンセルは登録情報に忠実にする（キャンセル無料は24時間前まで、遅刻は15分超で短縮またはキャンセル扱い）。
 12. 回答後に「メニューを見る」「予約する」「スタッフへ相談」などの次アクションを案内する。
+13. followUps を必ず1〜3件返す。危険症状時はメニュー提案チップを出さず、スタッフへ相談を優先する。
 `.trim();
+
+const defaultFollowUps = [
+  {
+    id: "fu-beauty-menu",
+    label: "メニューを見る",
+    action: "ask_related" as const,
+    payload: { guidedQuestionId: "gq-first-facial" },
+  },
+  {
+    id: "fu-beauty-reserve",
+    label: "予約する",
+    action: "ask_related" as const,
+    payload: { guidedQuestionId: "gq-late-15min" },
+  },
+  {
+    id: "fu-beauty-staff",
+    label: "スタッフへ相談",
+    action: "escalate_human" as const,
+  },
+];
 
 export const beautyGuidedQuestions: GuidedQuestionDef[] = [
   {
@@ -118,8 +139,6 @@ export const beautySalonPack: CustomerSupportPack = {
     "あなたは Beauty Salon Lueur のカスタマーサポートAIです。",
     "フェイシャル・ボディケア・リラクゼーションの予約制サロン案内を担当します。",
     "与えられたメニュー・規約・注意事項だけを根拠に、お客様へ丁寧に案内してください。",
-    "医療行為・診断・治療効果の断定、未記載メニューの推測はしないこと。",
-    "痛み・強い赤み・腫れ・出血・発熱では施術を勧めず、スタッフまたは医療機関へ案内すること。",
-    "妊娠・通院・服薬は「利用できる」と確約せず、スタッフ確認へ案内すること。",
   ],
+  defaultFollowUps,
 };

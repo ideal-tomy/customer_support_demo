@@ -202,10 +202,31 @@ export function AccessModeBar({
       </label>
       {demoExplain ? (
         <p className="access-mode-note">
-          ON のあいだ、回答下に「回答方式: 固定回答 / AI＋ナレッジ /
-          業務データ連携」を表示します。
+          ON のあいだ、回答下に仕組みカード（方式・根拠・次アクション型）を表示します。
         </p>
       ) : null}
+
+      <details className="access-mode-layers">
+        <summary>回答の3層と自社への載せ方</summary>
+        <ul className="access-mode-layers-list">
+          <li>
+            <strong>L1 固定</strong> — 営業時間・料金など、登録情報への忠実な案内
+          </li>
+          <li>
+            <strong>L2 AI＋ナレッジ</strong> — 複数文書を横断した提案・条件整理
+          </li>
+          <li>
+            <strong>L3 業務・有人</strong> — 在庫・空席・配送などは確認操作または担当者へ
+          </li>
+        </ul>
+        <p className="access-mode-note">
+          手順: サンプルで体験 → お試しナレッジに自社案内を貼る → Access
+          Mode（APIキー／体験コード）で本番に近い接続を確認
+        </p>
+        <p className="access-mode-note">
+          デモ外: 実注文・会員データの照会、本番有人キュー／CRM 連携は含みません。
+        </p>
+      </details>
 
       {savedHint ? <p className="access-mode-hint">{savedHint}</p> : null}
     </div>

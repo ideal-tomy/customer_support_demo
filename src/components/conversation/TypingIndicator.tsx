@@ -1,15 +1,18 @@
-/** Bot 応答待ちの 3 点タイピングインジケーター。 */
+/** Bot 応答待ちのタイピングインジケーター（顧客向け文言つき）。 */
 export function TypingIndicator() {
   return (
     <div
       className="typing-indicator"
       role="status"
       aria-live="polite"
-      aria-label="応答を作成中"
+      aria-label="ご案内を確認しています"
     >
-      <span className="typing-indicator-dot" />
-      <span className="typing-indicator-dot" />
-      <span className="typing-indicator-dot" />
+      <div className="typing-indicator-dots" aria-hidden="true">
+        <span className="typing-indicator-dot" />
+        <span className="typing-indicator-dot" />
+        <span className="typing-indicator-dot" />
+      </div>
+      <p className="typing-indicator-label">ご案内を確認しています…</p>
     </div>
   );
 }

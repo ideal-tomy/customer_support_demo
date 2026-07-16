@@ -96,6 +96,8 @@
 
 ## 次の一手
 
-1. [`acceptance-checklist.md`](acceptance-checklist.md) に沿って手動確認し、結果をチェック反映する  
-2. 設定 → デモ説明モード ON/OFF で「回答方式」の出し分けを確認する  
+次期の大枠は Dual Lens PLAN に移行する。
+
+1. [`dual-lens-experience-plan.md`](dual-lens-experience-plan.md) に沿って DL-0 → DL-1 から着手する  
+2. [`acceptance-checklist.md`](acceptance-checklist.md) は Dual Lens 受け入れ追記後に手動確認する  
 3. 本番 API 接続が必要になったら別タスクとして切り出す  

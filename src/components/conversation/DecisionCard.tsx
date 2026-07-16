@@ -1,11 +1,11 @@
 import type { AnswerBlocks, AnswerStatus, Citation } from "../../types/internal-knowledge";
 
 const STATUS_LABEL: Record<AnswerStatus, string> = {
-  allowed: "回答できます",
-  conditional: "条件付きで案内できます",
+  allowed: "ご案内できます",
+  conditional: "条件付きでご案内できます",
   needs_confirmation: "確認が必要です",
-  not_allowed: "ご案内できません",
-  not_found: "該当案内なし",
+  not_allowed: "こちらではお受けできません",
+  not_found: "ご案内が見つかりません",
 };
 
 type DecisionCardProps = {
@@ -26,6 +26,10 @@ export function DecisionCard({
 }: DecisionCardProps) {
   const open =
     evidenceOpen ?? (blocks.evidenceCollapsedByDefault ? false : true);
+  const conditions = blocks.conditions.slice(0, 3);
+  const exceptions = blocks.exceptions.slice(0, 3);
+  const procedures = blocks.procedures.slice(0, 4);
+  const notices = [...conditions, ...exceptions];
 
   return (
     <article className="support-card" data-status={blocks.status}>
@@ -41,6 +45,28 @@ export function DecisionCard({
             <li key={item}>{item}</li>
           ))}
         </ul>
+      ) : null}
+
+      {notices.length > 0 ? (
+        <section className="support-notices">
+          <p className="support-notices-title">ご注意</p>
+          <ul>
+            {notices.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {procedures.length > 0 ? (
+        <section className="support-procedures">
+          <p className="support-procedures-title">次の手順</p>
+          <ol>
+            {procedures.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ol>
+        </section>
       ) : null}
 
       {blocks.missingInformation.length > 0 ? (

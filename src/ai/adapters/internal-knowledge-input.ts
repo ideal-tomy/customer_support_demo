@@ -1,6 +1,7 @@
 import type { AiRequest } from "@axeon/ai-demo-core/types/provider";
 import type { AiProvider } from "@axeon/ai-demo-core/types/access-mode";
 import { getActiveIndustryPack } from "../../packs/registry";
+import { COMMON_SYSTEM_PROMPT } from "../prompts/common-system-prompt";
 import type { ScoredChunk } from "../retrieve";
 
 export function buildInternalKnowledgeSchemaHint(): string {
@@ -42,13 +43,17 @@ Rules:
 - If evidence is insufficient, use status "needs_confirmation" or "not_found".
 - Do not invent order status, tracking numbers, or account-specific facts.
 - Prefer short customer-friendly bullets (2-4).
-- When a human agent is appropriate, include followUp action "escalate_human" with label like "担当者に相談".
-- Prefer a followUp "申請方法を見る" (ask_related or open_document) when return/application steps exist.`;
+- followUps MUST NOT be an empty array (minimum 1, prefer 2-3).
+- When information is missing, prefer missingInfoChoices (1-3) before free-form followUps.
+- When a human agent is appropriate, include followUp action "escalate_human" near the end with a label like "担当者に相談".
+- Prefer a followUp "申請方法を見る" (ask_related or open_document) when return/application steps exist.
+- Always guide the customer to a next action (confirm, apply, reserve, or escalate).`;
 }
 
 export function buildInternalKnowledgeSystemPrompt(): string {
   const pack = getActiveIndustryPack();
   return [
+    COMMON_SYSTEM_PROMPT,
     ...pack.systemPromptIntro,
     buildInternalKnowledgeSchemaHint(),
     pack.promptOverlay,

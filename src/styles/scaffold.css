@@ -419,12 +419,26 @@ body {
 
 .typing-indicator {
   display: inline-flex;
-  align-items: center;
-  gap: 5px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
   padding: 0.85rem 1rem;
   border-radius: 16px;
   border-bottom-left-radius: 6px;
   background: var(--ik-bot-bg);
+}
+
+.typing-indicator-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.typing-indicator-label {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #5c6570;
+  line-height: 1.4;
 }
 
 .typing-indicator-dot {
@@ -485,6 +499,22 @@ body {
 .intent-quick-chip:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.composer-shortcuts {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.75rem 0.15rem;
+  border-top: 1px solid var(--ik-border);
+  background: #fafbfc;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.composer-shortcuts .intent-quick-replies {
+  flex-wrap: nowrap;
+  width: max-content;
+  min-width: 100%;
+  padding: 0.15rem 0 0.35rem;
 }
 
 .conversation-composer {
@@ -921,6 +951,29 @@ body {
   font-size: 0.75rem;
   line-height: 1.4;
   color: #5c6570;
+}
+
+.knowledge-adopt-callout {
+  margin: 0.55rem 0 0.65rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid #b7d7c8;
+  background: #eef8f3;
+}
+
+.knowledge-adopt-title {
+  margin: 0 0 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #085041;
+}
+
+.knowledge-adopt-steps {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #3d4650;
 }
 
 .knowledge-custom {
@@ -1439,6 +1492,66 @@ body {
   color: #6b5b3e;
 }
 
+.conversation-explain-cta {
+  align-self: flex-start;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--ik-brand, #0f6e56);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.mechanism-card {
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  border: 1px dashed #c9b896;
+  background: #fffaf0;
+}
+
+.mechanism-card-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6b5b3e;
+}
+
+.mechanism-card-list {
+  margin: 0;
+  padding-left: 1rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: #5c4a2e;
+}
+
+.access-mode-layers {
+  margin-top: 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #d0d6dd;
+  border-radius: 8px;
+  background: #fafbfc;
+  font-size: 0.82rem;
+  color: #3d4650;
+}
+
+.access-mode-layers summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.access-mode-layers-list {
+  margin: 0.5rem 0 0.35rem;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  line-height: 1.45;
+}
+
 .access-mode-explain-toggle {
   display: flex;
   align-items: flex-start;
@@ -1645,6 +1758,30 @@ body {
   left: 0;
   color: var(--cs-green, #1d9e75);
   font-weight: 700;
+}
+
+.support-notices,
+.support-procedures {
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: #5c6570;
+}
+
+.support-notices-title,
+.support-procedures-title {
+  margin: 0 0 0.2rem;
+  font-weight: 650;
+  font-size: 0.78rem;
+  color: #374151;
+}
+
+.support-notices ul,
+.support-procedures ol {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .support-missing {

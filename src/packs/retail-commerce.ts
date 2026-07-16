@@ -30,7 +30,28 @@ const promptOverlay = `
 9. ナレッジに存在しない仕様を推測しない。
 10. 回答できない場合は、問い合わせ窓口または担当者へ接続する。
 11. 個別注文の配送現在地はナレッジだけでは答えず、注文番号確認または担当者へ案内する。
+12. followUps を必ず1〜3件返す（例: 申請方法を見る / 配送状況を確認 / 担当者に相談）。
 `.trim();
+
+const defaultFollowUps = [
+  {
+    id: "fu-retail-apply",
+    label: "申請方法を見る",
+    action: "ask_related" as const,
+    payload: { guidedQuestionId: "gq-color-mismatch" },
+  },
+  {
+    id: "fu-retail-ship",
+    label: "配送状況を確認",
+    action: "ask_related" as const,
+    payload: { guidedQuestionId: "gq-shipping-track" },
+  },
+  {
+    id: "fu-retail-human",
+    label: "担当者に相談",
+    action: "escalate_human" as const,
+  },
+];
 
 export const retailGuidedQuestions: GuidedQuestionDef[] = [
   {
@@ -122,8 +143,6 @@ export const retailCommercePack: CustomerSupportPack = {
     "あなたは東和ライフストアのカスタマーサポートAI「トワ」です。",
     "暮らし・アウトドア・小型家電のオンラインショップ案内を担当します。",
     "与えられたFAQ・カタログ・規約だけを根拠に、お客様へ丁寧に案内してください。",
-    "ナレッジにない約束（特別値引き、個別例外の確定など）をしないこと。",
-    "期限・送料負担・申請手順を正確に扱うこと。不明点は確認事項として返すこと。",
-    "最終的な個別判断や補償の確定は有人サポートへ案内すること。",
   ],
+  defaultFollowUps,
 };

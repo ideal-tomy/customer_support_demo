@@ -6,6 +6,7 @@ import type {
 } from "../types/internal-knowledge";
 import { toAnswerBlocks } from "../adapters/internal-knowledge-output-adapter";
 import type { AskInternalKnowledgeResult } from "../ai/askInternalKnowledge";
+import type { AskSource } from "../demo/demo-explain-mode";
 
 const PROGRESS_STATES: KnowledgeDemoState[] = [
   "searching",
@@ -26,7 +27,7 @@ function terminalStateFromOutput(output: InternalKnowledgeOutput): TerminalState
 export type AskFlowResult = {
   blocks: AnswerBlocks;
   demoState: TerminalState;
-  source?: string;
+  source?: AskSource;
 };
 
 type UseAskFlowResult = {

@@ -5,7 +5,10 @@ import type {
   KnowledgeDocument,
   KnowledgePackManifest,
 } from "../types/pack-shared";
-import type { InternalKnowledgeOutput } from "../types/internal-knowledge";
+import type {
+  FollowUpChip,
+  InternalKnowledgeOutput,
+} from "../types/internal-knowledge";
 
 export type { AnswerSkeletonFixture };
 
@@ -44,6 +47,8 @@ export type CustomerSupportPack = {
   keywordFixtures: KeywordFixture[];
   promptOverlay: string;
   systemPromptIntro: string[];
+  /** Status=allowed 等で LLM followUps が不足したときの補完候補 */
+  defaultFollowUps: FollowUpChip[];
 };
 
 export type UnavailablePack = {

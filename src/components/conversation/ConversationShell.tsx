@@ -14,9 +14,10 @@ import { TypingIndicator } from "./TypingIndicator";
 import { useAskFlow } from "../../hooks/useAskFlow";
 import { askInternalKnowledge } from "../../ai/askInternalKnowledge";
 import {
-  formatAnswerMethodLabel,
+  setDemoExplainMode,
   useDemoExplainMode,
 } from "../../demo/demo-explain-mode";
+import { MechanismCard } from "./MechanismCard";
 import {
   findFixtureByGuidedQuestionId,
   findGuidedQuestion,
@@ -42,9 +43,6 @@ const CUSTOM_WELCOME_LINES = [
   "本番の機密は入れず、挙動確認用のテキストでお試しください。",
   "自由に質問してください。",
 ];
-
-/** サンプル体験で続けて質問できる往復数（用件選択＋自由入力） */
-const MAX_SAMPLE_TURNS = 3;
 
 type ThreadTurn = {
   id: string;
@@ -90,21 +88,15 @@ export function ConversationShell({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const packRevisionRef = useRef(pack.revision);
 
-  const sampleTurnsExhausted =
-    pack.isSample && turns.length >= MAX_SAMPLE_TURNS;
-  const canSampleContinue =
-    pack.isSample && turns.length < MAX_SAMPLE_TURNS && !isRunning;
-  const latestTurnAnswered =
-    turns.length > 0 && Boolean(turns[turns.length - 1]?.blocks);
   /** 初回: ウェルカム直下の用件チップ */
   const showWelcomeIntents =
     pack.isSample && turns.length === 0 && intentPath.length === 0 && !isRunning;
-  /** 回答後: 続けて質問するための用件チップ（最大3往復） */
-  const showContinueIntents =
-    canSampleContinue && latestTurnAnswered && intentPath.length === 0;
+  /** 入力欄直上の常時ショートカット B（階層ドリル中は隠す） */
+  const showComposerShortcuts =
+    pack.isSample && intentPath.length === 0 && !isRunning;
   /** 中間階層のチップ（初回／継続どちらでも） */
   const showIntentPathChips =
-    pack.isSample && intentPath.length > 0 && !isRunning && !sampleTurnsExhausted;
+    pack.isSample && intentPath.length > 0 && !isRunning;
   const welcomeLines = pack.isSample
     ? [
         `こんにちは！${pack.brand.storeName}の案内です。ご用件を選ぶかそのまま入力してください。`,
@@ -138,7 +130,7 @@ export function ConversationShell({
     intentSelections,
     isRunning,
     showWelcomeIntents,
-    showContinueIntents,
+    showComposerShortcuts,
     showIntentPathChips,
     error,
     notice,
@@ -182,12 +174,6 @@ export function ConversationShell({
     displayText?: string,
   ) => {
     if (isRunning) return;
-    if (pack.isSample && turns.length >= MAX_SAMPLE_TURNS) {
-      setNotice(
-        "サンプル体験の質問はここまでです。「最初からやり直す」で同じ業種の会話を再開するか、左上のアイコンで業種選択に戻れます。",
-      );
-      return;
-    }
     const id = `turn-${Date.now()}`;
     setNotice(null);
     setTurns((prev) => [
@@ -462,7 +448,7 @@ export function ConversationShell({
                     turn.blocks.missingInfoChoices.length > 0 ? (
                       <ClarifyingChoice
                         choices={turn.blocks.missingInfoChoices}
-                        disabled={isRunning || sampleTurnsExhausted}
+                        disabled={isRunning}
                         onSelect={(choice) => handleClarify(turn.id, choice)}
                       />
                     ) : null}
@@ -475,13 +461,19 @@ export function ConversationShell({
                         </p>
                       ) : null}
                       {demoExplain ? (
-                        <p className="conversation-source-hint is-tech">
-                          {formatAnswerMethodLabel(
-                            result.source,
-                            turn.blocks.status,
-                          )}
-                        </p>
-                      ) : null}
+                        <MechanismCard
+                          source={result.source}
+                          blocks={turn.blocks}
+                        />
+                      ) : (
+                        <button
+                          type="button"
+                          className="conversation-explain-cta"
+                          onClick={() => setDemoExplainMode(true)}
+                        >
+                          この案内の仕組みを見る
+                        </button>
+                      )}
                     </div>
                   ) : null}
                 </div>
@@ -519,32 +511,6 @@ export function ConversationShell({
             })
           : null}
 
-        {showContinueIntents ? (
-          <div className="chat-row chat-row-bot">
-            <div className="chat-bubble chat-bubble-bot">
-              <p className="chat-bubble-text">
-                ほかにご質問があれば選ぶか、そのまま入力してください。
-              </p>
-            </div>
-            <IntentQuickReplies
-              tree={intentTree}
-              path={intentPath}
-              disabled={isRunning}
-              onSelect={handleIntentSelect}
-            />
-          </div>
-        ) : null}
-
-        {sampleTurnsExhausted && !isRunning ? (
-          <div className="chat-row chat-row-bot">
-            <div className="chat-bubble chat-bubble-bot">
-              <p className="chat-bubble-text">
-                サンプル体験はここまでです。「最初からやり直す」で同じ業種の会話を再開するか、左上のアイコンで業種選択に戻れます。
-              </p>
-            </div>
-          </div>
-        ) : null}
-
         {isRunning ? (
           <div className="chat-row chat-row-bot">
             <TypingIndicator />
@@ -553,6 +519,17 @@ export function ConversationShell({
 
         <div ref={threadEndRef} />
       </div>
+
+      {showComposerShortcuts ? (
+        <div className="composer-shortcuts" aria-label="よくあるご用件">
+          <IntentQuickReplies
+            tree={intentTree}
+            path={[]}
+            disabled={isRunning}
+            onSelect={handleIntentSelect}
+          />
+        </div>
+      ) : null}
 
       <form className="conversation-composer" onSubmit={handleFreeSubmit}>
         <label className="visually-hidden" htmlFor="conversation-draft">
@@ -564,17 +541,13 @@ export function ConversationShell({
           className="conversation-composer-input"
           rows={1}
           value={draft}
-          disabled={
-            isRunning || pack.documents.length === 0 || sampleTurnsExhausted
-          }
+          disabled={isRunning || pack.documents.length === 0}
           placeholder={
             pack.documents.length === 0
               ? "先にお試しナレッジへ文書を追加してください"
-              : sampleTurnsExhausted
-                ? "サンプル質問は上限です"
-                : turns.length > 0
-                  ? "続けて質問できます"
-                  : "メッセージを入力"
+              : turns.length > 0
+                ? "続けて質問できます"
+                : "メッセージを入力"
           }
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleComposerKeyDown}
@@ -582,12 +555,7 @@ export function ConversationShell({
         <button
           type="submit"
           className="conversation-composer-submit"
-          disabled={
-            isRunning ||
-            !draft.trim() ||
-            pack.documents.length === 0 ||
-            sampleTurnsExhausted
-          }
+          disabled={isRunning || !draft.trim() || pack.documents.length === 0}
         >
           送信
         </button>
