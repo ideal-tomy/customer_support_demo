@@ -1593,6 +1593,44 @@ body {
   padding: 0.55rem 0.65rem 0.55rem 0.75rem;
 }
 
+@media (max-width: 520px) {
+  .cs-theme .chat-app-header {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0.4rem;
+    padding: 0.45rem 0.55rem;
+  }
+
+  .cs-header-main {
+    width: 100%;
+  }
+
+  .chat-app-header-actions {
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-end;
+    gap: 0.2rem;
+  }
+
+  .chat-app-restart-btn,
+  .chat-app-pack-badge {
+    min-height: 32px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .chat-app-restart-btn {
+    margin-right: auto;
+  }
+
+  .chat-app-icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+}
+
 .cs-header-main {
   display: flex;
   align-items: center;

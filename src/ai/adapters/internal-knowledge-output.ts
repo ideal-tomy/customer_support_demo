@@ -255,7 +255,10 @@ export function synthesizeFromHits(
     bullets: top.map((h) => h.excerpt.slice(0, 70) + (h.excerpt.length > 70 ? "…" : "")),
     conditions: [],
     exceptions: [],
-    requiredActions: ["マイページから手続きする", "不明点は担当者に相談する"],
+    requiredActions: [
+      "参考にしたご案内を確認する",
+      "不明点は担当者に相談する",
+    ],
     requiredDocuments: [],
     approvers: [],
     responsibleDepartments: [],
@@ -264,7 +267,7 @@ export function synthesizeFromHits(
     followUps: [
       {
         id: "fu-how",
-        label: "申請方法を見る",
+        label: "詳しいご案内を見る",
         action: "open_document",
         payload: {
           documentId: top[0]!.documentId,
