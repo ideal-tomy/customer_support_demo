@@ -10,6 +10,7 @@ import { ClarifyingChoice } from "./ClarifyingChoice";
 import { DecisionCard } from "./DecisionCard";
 import { FollowUpChips } from "./FollowUpChips";
 import { IntentQuickReplies } from "./IntentQuickReplies";
+import { RoiPaybackCta } from "../RoiPaybackCta";
 import { TypingIndicator } from "./TypingIndicator";
 import { useAskFlow } from "../../hooks/useAskFlow";
 import { askInternalKnowledge } from "../../ai/askInternalKnowledge";
@@ -102,6 +103,7 @@ export function ConversationShell({
         `こんにちは！${pack.brand.storeName}の案内です。ご用件を選ぶかそのまま入力してください。`,
       ]
     : CUSTOM_WELCOME_LINES;
+  const hasAnsweredTurn = turns.some((t) => t.blocks);
 
   const attachResult = useEffectEvent((blocks: AnswerBlocks) => {
     if (!pendingTurnId) return;
@@ -516,6 +518,8 @@ export function ConversationShell({
             <TypingIndicator />
           </div>
         ) : null}
+
+        {hasAnsweredTurn ? <RoiPaybackCta /> : null}
 
         <div ref={threadEndRef} />
       </div>

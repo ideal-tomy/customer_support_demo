@@ -3,6 +3,7 @@ import { AccessModeBar } from "./access/AccessModeBar";
 import { ConversationShell } from "./conversation/ConversationShell";
 import { IndustrySelectScreen } from "./IndustrySelectScreen";
 import { KnowledgePanel } from "./knowledge/KnowledgePanel";
+import { RoiPaybackCta } from "./RoiPaybackCta";
 import { BottomSheet } from "./ui/BottomSheet";
 import { useVisualViewportHeight } from "../hooks/useVisualViewportHeight";
 import { useKnowledgePack } from "../knowledge/pack-store";
@@ -210,6 +211,7 @@ export function CustomerSupportDemo() {
         onClose={() => setSheet("none")}
       >
         <AccessModeBar trialPortalUrl={trialPortalUrl} />
+        <RoiPaybackCta />
       </BottomSheet>
     </div>
   );
